@@ -56,11 +56,10 @@ setup(
     include_package_data=True,
     # numpy preinstall required due to obspy
     setup_requires=[
-        NUMPY_VERSION,
+        NUMPY_VERSION, 'Cython >= 0.22.1',
     ],
     install_requires=[
         NUMPY_VERSION,
-        'Cython >= 0.22.1',
         'scipy >= 0.15.1',
         'matplotlib >= 1.4.3',  # nci version with python=3.4
         'obspy >= 1.0.3',
