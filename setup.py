@@ -51,7 +51,7 @@ setup(
     # author='Geoscience Australia Passive Seismic Team',
     author_email='',
     url='https://github.com/GeoscienceAustralia/PhasePApy',
-    packages=['phasepapy'],
+    packages=['phasepapy', 'phasepapy.associator', 'phasepapy.phasepicker'],
     package_dir={'PhasePApy': 'phasepapy'},
     include_package_data=True,
     # numpy preinstall required due to obspy
