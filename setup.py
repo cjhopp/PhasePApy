@@ -4,7 +4,7 @@ import sys
 
 
 python_version = sys.version_info
-__version__ = "0.0.1"
+__version__ = "1.1.01"
 
 # numpy support for python3.3 not available for version > 1.10.1
 if python_version.major == 3 and python_version.minor == 3:
