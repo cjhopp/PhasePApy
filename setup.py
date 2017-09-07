@@ -78,14 +78,16 @@ setup(
             'flake8-docstrings>=1.1.0',
         ]
     },
-    tests_require=[
-        'pytest-cov',
-        'coverage',
-        'codecov',
-        'tox',
-        'pytest'  # pytest should be last
-    ],
-    license="Apache Software License 2.0",
+    tests_require={
+        'test': [
+            'pytest-cov',
+            'coverage',
+            'codecov',
+            'tox',
+            'pytest'  # pytest should be last
+        ]
+    },
+    # license="Apache Software License 2.0",
     zip_safe=False,
     keywords='Seismic, associator, picker, PhasePicker, '
              'FBpicker, AICDpicker, KTpicker, P and S phases',
