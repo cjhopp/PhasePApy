@@ -62,7 +62,7 @@ setup(
         NUMPY_VERSION,
         'scipy >= 0.15.1',
         'matplotlib >= 1.4.3',  # nci version with python=3.4
-        'obspy >= 1.0.3',
+        'obspy',
     ],
     extras_require={
         'dev': [
