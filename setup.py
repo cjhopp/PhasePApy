@@ -87,7 +87,7 @@ setup(
             'pytest'  # pytest should be last
         ]
     },
-    # license="Apache Software License 2.0",
+    license="See Readme",
     zip_safe=False,
     keywords='Seismic, associator, picker, PhasePicker, '
              'FBpicker, AICDpicker, KTpicker, P and S phases',

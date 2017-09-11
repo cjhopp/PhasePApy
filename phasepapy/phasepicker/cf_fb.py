@@ -1,6 +1,6 @@
 import numpy as np
 from .util import *
-from obspy.signal import bandpass
+from obspy.signal.filter import bandpass
 from obspy.signal.invsim import cosine_taper
 
 class Ratio():
