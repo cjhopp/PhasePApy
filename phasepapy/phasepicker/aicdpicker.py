@@ -46,39 +46,38 @@ class AICDPicker:
         self.uncert_len = self.t_ma
         self.uncert_coeff = uncert_coeff
 
+    def picks(self, tr):
+        """
+        Make picks, polarity, snr, and uncertainty.
+        """
 
-def picks(self, tr):
-    """ 
-    Make picks, polarity, snr, and uncertainty.
-    """
+        # tr = trace.detrend('linear')
+        #       now=time.time()
+        summary = AICDSummary(self, tr)
+        #       print "It took %f s to summary" %(time.time()-now)
 
-    # tr = trace.detrend('linear')
-    #       now=time.time()
-    summary = AICDSummary(self, tr)
-    #       print "It took %f s to summary" %(time.time()-now)
+        # threshold
+        #       now=time.time()
+        threshold = summary.threshold
+        #       print "It took %f s to threshold" %(time.time()-now)
 
-    # threshold
-    #       now=time.time()
-    threshold = summary.threshold
-    #       print "It took %f s to threshold" %(time.time()-now)
+        # picks
+        #       now=time.time()
+        scnl, picks, trigger, snr = summary.pick_ident()
+        #       print "It took %f s to ident" %(time.time()-now)
 
-    # picks
-    #       now=time.time()
-    scnl, picks, trigger, snr = summary.pick_ident()
-    #       print "It took %f s to ident" %(time.time()-now)
+        # uncertainty
+        #       now=time.time()
+        uncertainty = summary.uncertainty()
+        #       print "It took %f s to uncertainty" %(time.time()-now)
 
-    # uncertainty
-    #       now=time.time()
-    uncertainty = summary.uncertainty()
-    #       print "It took %f s to uncertainty" %(time.time()-now)
-
-    # polarity
-    #       now=time.time()
-    polarity = summary.polarity()
-    #       print "It took %f s to polarity" %(time.time()-now)
-    return scnl, picks, polarity, snr, uncertainty
-    # else:
-    #  return np.array([]),np.array([]),np.array([]),np.array([]),np.array([])
+        # polarity
+        #       now=time.time()
+        polarity = summary.polarity()
+        #       print "It took %f s to polarity" %(time.time()-now)
+        return scnl, picks, polarity, snr, uncertainty
+        # else:
+        #  return np.array([]),np.array([]),np.array([]),np.array([]),np.array([])
 
 
 class AICDSummary:

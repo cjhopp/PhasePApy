@@ -13,5 +13,7 @@ def test_aicdpicker_integration(event, picker):
     st = obspy_read(mseed)
     total_picks = []
     for s in st[:2]:
-        _, picks, _, _, _ = picker.picks(s)
+        _, picks, _, _, _ = picker().picks(s)
         total_picks += picks
+
+    assert len(total_picks)
