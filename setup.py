@@ -4,7 +4,7 @@ import sys
 
 
 python_version = sys.version_info
-__version__ = "0.0.1"
+__version__ = "1.1.01"
 
 # numpy support for python3.3 not available for version > 1.10.1
 if python_version.major == 3 and python_version.minor == 3:
@@ -51,16 +51,15 @@ setup(
     # author='Geoscience Australia Passive Seismic Team',
     author_email='',
     url='https://github.com/GeoscienceAustralia/PhasePApy',
-    packages=['phasepapy'],
+    packages=['phasepapy', 'phasepapy.associator', 'phasepapy.phasepicker'],
     package_dir={'PhasePApy': 'phasepapy'},
     include_package_data=True,
     # numpy preinstall required due to obspy
     setup_requires=[
-        NUMPY_VERSION,
+        NUMPY_VERSION, 'Cython >= 0.22.1',
     ],
     install_requires=[
         NUMPY_VERSION,
-        'Cython >= 0.22.1',
         'scipy >= 0.15.1',
         'matplotlib >= 1.4.3',  # nci version with python=3.4
         'obspy >= 1.0.3',
@@ -79,14 +78,16 @@ setup(
             'flake8-docstrings>=1.1.0',
         ]
     },
-    tests_require=[
-        'pytest-cov',
-        'coverage',
-        'codecov',
-        'tox',
-        'pytest'  # pytest should be last
-    ],
-    license="Apache Software License 2.0",
+    tests_require={
+        'test': [
+            'pytest-cov',
+            'coverage',
+            'codecov',
+            'tox',
+            'pytest'  # pytest should be last
+        ]
+    },
+    license="See Readme",
     zip_safe=False,
     keywords='Seismic, associator, picker, PhasePicker, '
              'FBpicker, AICDpicker, KTpicker, P and S phases',
