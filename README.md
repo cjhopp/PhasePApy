@@ -1,3 +1,19 @@
+# Installation:
+
+Install [virtualenv](https://gist.github.com/basaks/b33ea9106c7d1d72ac3a79fdcea430eb).
+
+Inside a `virtualenv`, use:
+
+```bash
+$ cd PhasePAPy
+$ pip install -r requirements.txt
+```
+
+Install `PhasePAPy`:
+```bash
+$ python setup.py develop
+``` 
+
 # PhasePApy 
 
 ## Reference 
@@ -69,7 +85,3 @@ The PhasePApy package relies on open libraries:
 + Scipy 
 + MatPlotLib (Optional) if you are going to plot results with plotting scripts in this 
 package, you need matplotlib as well. Otherwise, the users can visualize it based on their own methods.	
-
-
-
-
