@@ -14,6 +14,12 @@ Install `PhasePAPy`:
 $ python setup.py develop
 ``` 
 
+For a development environment, activate your `virtualenv`, do the following:
+```bash
+pip install .[dev]
+pip install git+https://github.com/obspy/obspy.git
+``` 
+
 # PhasePApy 
 
 ## Reference 
