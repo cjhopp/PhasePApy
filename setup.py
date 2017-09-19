@@ -76,17 +76,12 @@ setup(
             'pytest-cov>=2.5.1',
             'pytest-regtest>=0.15.1',
             'flake8-docstrings>=1.1.0',
-        ]
-    },
-    tests_require={
-        'test': [
-            'pytest-cov',
             'coverage',
             'codecov',
-            'tox',
             'pytest'  # pytest should be last
         ]
     },
+
     license="See Readme",
     zip_safe=False,
     keywords='Seismic, associator, picker, PhasePicker, '
