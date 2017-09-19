@@ -8,7 +8,7 @@ def picker(request):
     return request.param
 
 
-def test_aicdpicker_integration(event, picker):
+def test_picker_integration(event, picker):
     mseed = event + '_short.mseed'
     st = obspy_read(mseed)
     total_picks = []
