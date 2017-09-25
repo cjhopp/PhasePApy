@@ -83,7 +83,6 @@ class Plot:
             l_cluster = len(set(cluster_sta))
             arr.append((i, candidate_ots[i].ot, l_cluster, len(cluster)))
 
-        assert len(arr)
         x1 = np.array(arr)[:, 0]
         x2 = np.array(arr)[:, 1]
         y1 = np.array(arr)[:, 2]
@@ -147,10 +146,11 @@ class Plot:
         # plot matches and mismatches circles
         matches = self.assoc_db.query(Candidate).filter(
             Candidate.assoc_id == assoc_id).filter(
-            Candidate.locate_flag == True).all()
+            Candidate.locate_flag is True).all()
         mismatches = self.assoc_db.query(Candidate).filter(
             Candidate.assoc_id == assoc_id).filter(
-            Candidate.locate_flag == False).all()
+            Candidate.locate_flag is False).all()
+
         lon_eve, lat_eve = self.assoc_db.query(Associated.longitude,
                                                Associated.latitude).filter(
             Associated.id == assoc_id).first()

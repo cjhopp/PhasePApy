@@ -7,7 +7,6 @@ The associator also uses sqlalchemy to store phase picks and associated
 events in a database. This example uses sqlite which should be included in
 python.
 """
-import sys
 import glob
 import os
 # Get logging information
@@ -17,16 +16,16 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from datetime import datetime
 
+from phasepapy import palog
 from phasepapy.phasepicker import fbpicker
 from phasepapy.associator import tables1D, assoc1D, plot1D
 
 FILEPATH = os.path.dirname(__file__)
 DATA = os.path.join(FILEPATH, 'data_20130616153750')
 
-rootlog = logging.getLogger()
-rootlog.setLevel(logging.INFO)
-ch = logging.StreamHandler(sys.stderr)
-rootlog.addHandler(ch)
+palog.configure('INFO')
+log = logging.getLogger(__name__)
+
 
 # If the associator database exists delete it first,  start fresh for this
 # example

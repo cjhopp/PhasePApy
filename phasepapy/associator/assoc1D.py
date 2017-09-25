@@ -11,8 +11,10 @@ from operator import itemgetter
 from itertools import combinations
 import logging
 
+log = logging.getLogger(__name__)
 
-class LocalAssociator():
+
+class LocalAssociator:
     """
     The 1D Associator associate picks with travel time curve of 1D velocity of
     fixed hypocenter depth.
@@ -68,15 +70,15 @@ class LocalAssociator():
         """
         Create candidate events.
         """
-        # now1 = time.time()
-        #############
-        # Get all stations with unnassoiated picks
-        stations = self.assoc_db.query(Pick.sta).filter(
-            Pick.assoc_id == None).distinct().all()
 
+        log.info('Creating candidate events')
+        stations = self.assoc_db.query(Pick.sta).filter(
+            Pick.assoc_id is None).distinct().all()
+
+        log.info('Found associated stations list')
         for sta, in stations:  # the comma is needed
             picks = self.assoc_db.query(Pick).filter(Pick.sta == sta).filter(
-                Pick.assoc_id == None).order_by(Pick.time).all()
+                Pick.assoc_id is None).order_by(Pick.time).all()
             # Condense picktimes that are within our pick uncertainty value
             # picktimes are python datetime objects
             if stations.index((sta,)) == 0:  # stupid tuple
@@ -90,7 +92,7 @@ class LocalAssociator():
                                                       self.aggr_norm, counter)
             picks_modified = self.assoc_db.query(PickModified).filter(
                 PickModified.sta == sta).filter(
-                PickModified.assoc_id == None).order_by(PickModified.time).all()
+                PickModified.assoc_id is None).order_by(PickModified.time).all()
 
             # Generate all possible candidate events
             for i in range(0, len(picks_modified) - 1):
@@ -107,44 +109,43 @@ class LocalAssociator():
                                                   picks_modified[j].id)
                         self.assoc_db.add(new_candidate)
                         self.assoc_db.commit()
-
+        log.info('Finished creating candidate events')
 
     def associate_candidates(self):
         """
         Associate all possible candidate events by comparing the
         projected origin-times.
         """
-        # now2 = time.time()
+        log.info('Associating candidate events')
 
         dt_ot = timedelta(seconds=self.assoc_ot_uncert)
 
         # Query all candidate ots
         candidate_ots = self.assoc_db.query(Candidate).filter(
-            Candidate.assoc_id == None).order_by(Candidate.ot).all()
+            Candidate.assoc_id is None).order_by(Candidate.ot).all()
         L_ots = len(candidate_ots)  # ; print L_ots
-        Array = []
+        arr = []
         for i in range(L_ots):
             cluster = self.assoc_db.query(Candidate).filter(
-                Candidate.assoc_id == None).filter(
+                Candidate.assoc_id is None).filter(
                 Candidate.ot >= candidate_ots[i].ot).filter(
                 Candidate.ot < (candidate_ots[i].ot + dt_ot)).order_by(
                 Candidate.ot).all()
             cluster_sta = self.assoc_db.query(Candidate.sta).filter(
-                Candidate.assoc_id == None).filter(
+                Candidate.assoc_id is None).filter(
                 Candidate.ot >= candidate_ots[i].ot).filter(
                 Candidate.ot < (candidate_ots[i].ot + dt_ot)).order_by(
                 Candidate.ot).all()
             l_cluster = len(set(cluster_sta))
-            Array.append((i, l_cluster, len(cluster)))
-        # sort Array by l_cluster, notice Array has been changed
-        Array.sort(key=itemgetter(1),
-                   reverse=True)
+            arr.append((i, l_cluster, len(cluster)))
+        # sort arr by l_cluster, notice arr has been changed
+        arr.sort(key=itemgetter(1), reverse=True)
 
-        for i in range(len(Array)):
-            index = Array[i][0]
-            if Array[i][1] >= self.nsta_declare:
+        for i in range(len(arr)):
+            index = arr[i][0]
+            if arr[i][1] >= self.nsta_declare:
                 candis = self.assoc_db.query(Candidate).filter(
-                    Candidate.assoc_id == None).filter(
+                    Candidate.assoc_id is None).filter(
                     Candidate.ot >= candidate_ots[index].ot).filter(
                     Candidate.ot < (candidate_ots[index].ot + dt_ot)).order_by(
                     Candidate.ot).all()
@@ -154,7 +155,7 @@ class LocalAssociator():
                 # been associated
                 picks_associated_id = list(set(
                     self.assoc_db.query(PickModified.id).filter(
-                        PickModified.assoc_id != None).all()))
+                        PickModified.assoc_id is not None).all()))
                 index_candis = []
                 for id, in picks_associated_id:
                     for i, candi in enumerate(candis):
@@ -247,8 +248,8 @@ class LocalAssociator():
                             self.assoc_db.commit()
                             event_id = new_event.id
 
-                            logging.info('event_id: ' + str(event_id))
-                            logging.info(str(
+                            log.info('event_id: ' + str(event_id))
+                            log.info(str(
                                 ['ot:', origintime, 'ot_uncert:', ot_unc,
                                  'loc:', LAT, LON, 'loc_uncert:', RMS, 'nsta:',
                                  nsta]))
@@ -278,9 +279,14 @@ class LocalAssociator():
             else:
                 break
 
+        log.info('Finished associating events')
+
     def single_phase(self):
 
+        log.info('Adding single stations to events')
+
         events = self.assoc_db.query(Associated).all()
+
         for event in events:
 
             event_id = event.id
@@ -359,6 +365,8 @@ class LocalAssociator():
                             pick.assoc_id = event.id
                             pick.locate_flag = None
             self.assoc_db.commit()
+
+        log.info('Added single stations to events')
 
     # create the combinations from different stations
     def comb(self, tt):
