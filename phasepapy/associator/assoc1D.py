@@ -36,10 +36,10 @@ class LocalAssociator():
 
         engine_associator = create_engine(db_assoc, echo=False)
         engine_tt_stations_1D = create_engine(db_tt, echo=False)
-        Base.metadata.create_all(
-            engine_associator)  # Base is from the imported tables3D
-        BaseTT1D.metadata.create_all(
-            engine_tt_stations_1D)  # BaseTT3D is from the imported tables3D
+        # Base is from the imported tables3D
+        Base.metadata.create_all(engine_associator)
+        # BaseTT3D is from the imported tables3D
+        BaseTT1D.metadata.create_all(engine_tt_stations_1D)
         Session1 = sessionmaker(bind=engine_associator)  # events table
         Session2 = sessionmaker(bind=engine_tt_stations_1D)  # traveltime table
         self.assoc_db = Session1()

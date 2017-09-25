@@ -3,3 +3,4 @@ scipy
 git+https://github.com/obspy/obspy.git
 matplotlib >= 1.4.3
 pytest
+sqlalchemy
