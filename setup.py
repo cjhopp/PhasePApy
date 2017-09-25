@@ -52,6 +52,8 @@ setup(
     author_email='',
     url='https://github.com/GeoscienceAustralia/PhasePApy',
     packages=['phasepapy', 'phasepapy.associator', 'phasepapy.phasepicker'],
+    dependency_links=['https://github.com/matplotlib/basemap/archive/v1.1.0'
+                      '.zip#egg=basemap-1.1.0'],
     package_dir={'PhasePApy': 'phasepapy'},
     include_package_data=True,
     # numpy preinstall required due to obspy
@@ -63,6 +65,8 @@ setup(
         'scipy >= 0.15.1',
         'matplotlib >= 1.4.3',  # nci version with python=3.4
         'obspy >= 1.0.3',
+        'pillow >= 4.1.1',
+        'basemap == 1.1.0'
     ],
     extras_require={
         'dev': [
