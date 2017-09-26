@@ -23,7 +23,7 @@ from phasepapy.associator import tables1D, assoc1D, plot1D
 FILEPATH = os.path.dirname(__file__)
 DATA = os.path.join(FILEPATH, 'data_20130616153750')
 
-palog.configure('INFO')
+palog.configure('DEBUG')
 log = logging.getLogger(__name__)
 
 
@@ -88,6 +88,7 @@ assocOK.single_phase()
 
 # Plot example event
 plt = plot1D.Plot(db_assoc, db_tt)
+log.debug('Initiated 1D plot')
 plt.cluster_plot(assoc_ot_uncert=3)
 plt.event_plot(1, west=-104.5, east=-94, south=33.5, north=37.5, deltalon=1.0,
                deltalat=1.0)

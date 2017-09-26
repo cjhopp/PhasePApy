@@ -123,7 +123,7 @@ class LocalAssociator:
         # Query all candidate ots
         candidate_ots = self.assoc_db.query(Candidate).filter(
             Candidate.assoc_id is None).order_by(Candidate.ot).all()
-        L_ots = len(candidate_ots)  # ; print L_ots
+        L_ots = len(candidate_ots)
         arr = []
         for i in range(L_ots):
             cluster = self.assoc_db.query(Candidate).filter(
@@ -138,8 +138,10 @@ class LocalAssociator:
                 Candidate.ot).all()
             l_cluster = len(set(cluster_sta))
             arr.append((i, l_cluster, len(cluster)))
+
         # sort arr by l_cluster, notice arr has been changed
         arr.sort(key=itemgetter(1), reverse=True)
+        log.debug('Queried all candidate origin times')
 
         for i in range(len(arr)):
             index = arr[i][0]

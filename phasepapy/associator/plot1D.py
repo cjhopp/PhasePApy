@@ -1,3 +1,4 @@
+import logging
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 from datetime import timedelta
@@ -13,7 +14,7 @@ from .tables1D import Pick, PickModified, Candidate, Associated
 from .tt_stations_1D import Station1D
 from .func1D import TTtable1D
 
-
+log = logging.getLogger(__name__)
 
 def add_subplot_axes(ax, rect, axisbg='w'):
     fig = plt.gcf()
@@ -58,6 +59,7 @@ class Plot:
         #        |    |     \/      \  /          \  /        \/
         #        |    |              \/            \/
 
+        log.debug('Creating cluster plot')
         matplotlib.rcParams["axes.labelsize"] = "large"
         matplotlib.rcParams["axes.linewidth"] = 2.0
         matplotlib.rcParams["xtick.major.size"] = 8
@@ -82,7 +84,9 @@ class Plot:
                 Candidate.ot).all()
             l_cluster = len(set(cluster_sta))
             arr.append((i, candidate_ots[i].ot, l_cluster, len(cluster)))
-
+            log.debug('DB query successful for canditate '
+                      'origin time {}'.format(i))
+        log.debug('DB query successful for origin times and stations')
         x1 = np.array(arr)[:, 0]
         x2 = np.array(arr)[:, 1]
         y1 = np.array(arr)[:, 2]
@@ -90,7 +94,7 @@ class Plot:
         fig = plt.figure(figsize=(15, 6))
         # p1=plt.plot(x2,y1,'ro-')
         p1 = plt.plot(x2, y1, 'o-', c='gray')
-        plt.ylim(0, max(y1) + 1);
+        plt.ylim(0, max(y1) + 1)
         plt.xlim(min(x2) - timedelta(seconds=60),
                  max(x2) + timedelta(seconds=60))
         plt.xlabel('Time (s)', fontsize=20)
@@ -101,7 +105,7 @@ class Plot:
         fig = plt.figure(figsize=(15, 6))
         # p2=plt.plot(x2,y2,'bo-')
         p2 = plt.plot(x2, y2, 'o-', c='gray')
-        plt.ylim(0, max(y2) + 1);
+        plt.ylim(0, max(y2) + 1)
         plt.xlim(min(x2) - timedelta(seconds=60),
                  max(x2) + timedelta(seconds=60))
         plt.xlabel('Time (s)', fontsize=20)
