@@ -164,6 +164,8 @@ class LocalAssociator:
         arr.sort(key=itemgetter(1), reverse=True)
         log.debug('Queried all candidate origin times')
 
+        log.debug('Only analyzing arrival with cluster size > nsta_declare')
+
         for i in range(len(arr)):
             index = arr[i][0]
             if arr[i][1] >= self.nsta_declare:
@@ -172,6 +174,9 @@ class LocalAssociator:
                     Candidate.ot >= candidate_ots[index].ot).filter(
                     Candidate.ot < (candidate_ots[index].ot + dt_ot)).order_by(
                     Candidate.ot).all()
+
+                log.debug('Found these candidate events: '
+                          '{candis}'.format(candis=candis))
 
                 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 # remove the candidates with the modified picks has
@@ -204,7 +209,9 @@ class LocalAssociator:
                     radius.append(
                         (candi.sta, lon, lat, candi.d_km, candi.delta, i))
 
+                log.debug('Using radius {}'.format(radius))
                 cb = self.comb(radius)
+                log.debug('Using CB: {}'.format(cb))
                 rms_sort = []
                 for i in range(len(cb)):
                     radius_cb = cb[i]
@@ -250,6 +257,7 @@ class LocalAssociator:
 
                     # declare event when nsta and RMS are under control
                     nsta = len(MATCHES_nol)
+
                     if nsta >= self.nsta_declare:
                         LOC = fmin(locating, (lon, lat), MATCHES_nol, disp=0)
                         LON = round(LOC[0], 3)
@@ -309,6 +317,9 @@ class LocalAssociator:
         log.info('Adding single stations to events')
 
         events = self.assoc_db.query(Associated).all()
+        log.info('These events will be analysed: {}'.format(events))
+        log.info('If events list is empty, no events satisfy event '
+                 'selection criteria.')
 
         for event in events:
 
@@ -322,8 +333,9 @@ class LocalAssociator:
             for sta, in self.assoc_db.query(PickModified.sta).filter(
                             PickModified.assoc_id == event_id).distinct().all():
                 sta_assoc.append(sta)
+            log.debug('Associated stations list: {}'.format(sta_assoc))
 
-                # associate single phase
+            # associate single phase
             for sta, in self.assoc_db.query(PickModified.sta).filter(
                             PickModified.assoc_id == None).filter(
                             PickModified.time > ot).filter(
@@ -332,21 +344,20 @@ class LocalAssociator:
 
                 station = self.tt_stations_db_1D.query(Station1D).filter(
                     Station1D.sta == sta).first()
-                # print event.latitude,event.longitude,sta, station.latitude,
-                # station.longitude
                 d_km = gps2dist_azimuth(event.latitude, event.longitude,
                                         station.latitude, station.longitude)[
                            0] / 1000.
 
-                if (d_km < self.max_km) and (
-                    sta not in sta_assoc):  # only associated single phase
-                    # from  stations not contribute p and s pairs
+                # only associated single phase from stations not contribute
+                # p and s pairs
+                if (d_km < self.max_km) and (sta not in sta_assoc):
                     tt, d_diff = tt_km(self.tt_stations_db_1D, d_km)
 
                     picks_p = self.assoc_db.query(PickModified).filter(
                         PickModified.sta == sta).filter(PickModified.time >= (
-                    ot + timedelta(
-                        seconds=tt.p_tt - 0.5 * self.aggr_window))).filter(
+                            ot +
+                            timedelta(seconds=tt.p_tt -
+                                      0.5 * self.aggr_window))).filter(
                         PickModified.time <= (ot + timedelta(
                             seconds=tt.p_tt + 0.5 * self.aggr_window))).all()
                     # print 'picks_p: ',picks_p, 'tt.p_tt: ',tt.p_tt
@@ -418,7 +429,8 @@ class LocalAssociator:
 
 def datetime_statistics(dt_list, norm='L2'):
     """
-    Calculate the mean and standard deviations in seconds of a list of datetime values.
+    Calculate the mean and standard deviations in seconds of a list of
+    datetime values.
     """
     offsets = []
     for dt in dt_list:

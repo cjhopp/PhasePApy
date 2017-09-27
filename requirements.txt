@@ -4,3 +4,6 @@ git+https://github.com/obspy/obspy.git
 matplotlib >= 1.4.3
 pytest
 sqlalchemy
+basemap == 1.1.0
+mpi4py == 2.0.0
+geographiclib

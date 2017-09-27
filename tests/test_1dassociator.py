@@ -2,7 +2,8 @@ import os
 import shutil
 # Get logging information
 import logging
-from obspy.core import read as obspy_read
+import glob
+from obspy.core import read as obspy_read, Stream
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 from datetime import datetime
@@ -10,17 +11,20 @@ from datetime import datetime
 from phasepapy import palog
 from phasepapy.phasepicker import fbpicker
 from phasepapy.associator import tables1D, assoc1D, plot1D
+from phasepapy.associator.tables1D import Base, Pick, PickModified, \
+    Candidate, Associated
+
 
 FILEPATH = os.path.dirname(__file__)
 PHASEPAPY = os.path.dirname(FILEPATH)
-DATA = os.path.join(PHASEPAPY, 'examples', 'data_20130616153750')
+EX_DATA = os.path.join(PHASEPAPY, 'examples', 'data_20130616153750')
 
 palog.configure('DEBUG')
 log = logging.getLogger(__name__)
-db_tt = os.path.join(DATA, 'tt_stations_1D.db')
+db_tt = os.path.join(EX_DATA, 'tt_stations_1D.db')
 
 
-def test_1dassociater(event, random_filename):
+def test_1dassociater(random_filename):
     # If the associator database exists delete it first,  start fresh for this
     # example
 
@@ -41,14 +45,18 @@ def test_1dassociater(event, random_filename):
     Session = sessionmaker(bind=engine_assoc)
     session = Session()
     # Find all waveform data in the data directory
-    mseed = event + '_short.mseed'
+    file_list = glob.glob(os.path.join(EX_DATA, '*.msd'))
+
     # Define our picker instance
-    picker = fbpicker.FBPicker(t_long=5, freqmin=1, mode='rms', t_ma=20,
-                               nsigma=6,
+    picker = fbpicker.FBPicker(t_long=5, freqmin=0.5, mode='rms', t_ma=20,
+                               nsigma=3,
                                t_up=0.78, nr_len=2, nr_coeff=2, pol_len=10,
                                pol_coeff=10, uncert_coeff=3)
 
-    st = obspy_read(mseed)
+    st = Stream()
+
+    for f in file_list:
+        st += obspy_read(f)
 
     # Pick the waveforms
     for s in st:
@@ -69,9 +77,9 @@ def test_1dassociater(event, random_filename):
                                       max_km=350,
                                       aggregation=1,
                                       aggr_norm='L2',
-                                      cutoff_outlier=10,
+                                      cutoff_outlier=30,
                                       assoc_ot_uncert=7,
-                                      nsta_declare=4,
+                                      nsta_declare=3,
                                       loc_uncert_thresh=0.2)
     # Identify candidate events (Pick Aggregation)
     assocOK.id_candidate_events()
@@ -79,3 +87,7 @@ def test_1dassociater(event, random_filename):
     assocOK.associate_candidates()
     # Add singles stations to events
     assocOK.single_phase()
+
+    events = assocOK.assoc_db.query(Associated).all()
+    assert len(events)
+    assert events[0].nsta == 3
