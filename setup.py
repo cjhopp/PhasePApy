@@ -66,7 +66,8 @@ setup(
         'matplotlib >= 1.4.3',  # nci version with python=3.4
         'obspy >= 1.0.3',
         'pillow >= 4.1.1',
-        'basemap == 1.1.0'
+        'basemap == 1.1.0',
+        'mpi4py == 2.0.0',
     ],
     extras_require={
         'dev': [

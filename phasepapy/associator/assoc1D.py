@@ -95,7 +95,7 @@ class LocalAssociator:
                                                   self.aggr_window,
                                                   self.aggr_norm, counter)
 
-            log.debug('Wrote modified picks for station # {number} of {len}, '
+            log.debug('Wrote modified picks for station {number} of {len}, '
                       'station {sta}'.format(number=indx + 1,
                                              len=len(stations),
                                              sta=sta))
@@ -104,6 +104,11 @@ class LocalAssociator:
                 PickModified.sta == sta).filter(
                 PickModified.assoc_id == None).order_by(
                 PickModified.time).all()
+
+            log.debug('Queried modified picks for station {number} of {len}, '
+                      'station {sta}'.format(number=indx + 1,
+                                             len=len(stations),
+                                             sta=sta))
 
             # Generate all possible candidate events
             for i in range(0, len(picks_modified) - 1):
@@ -121,7 +126,7 @@ class LocalAssociator:
                                                   picks_modified[j].id)
                         self.assoc_db.add(new_candidate)
                         self.assoc_db.commit()
-            log.debug('Wrote candidate events for station # {number} of {len}, '
+            log.debug('Wrote candidate events for station {number} of {len}, '
                       'station {sta}'.format(number=indx + 1,
                                              len=len(stations),
                                              sta=sta))
