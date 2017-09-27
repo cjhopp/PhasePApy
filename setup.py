@@ -68,6 +68,7 @@ setup(
         'pillow >= 4.1.1',
         'basemap == 1.1.0',
         'mpi4py == 2.0.0',
+        'geographiclib',
     ],
     extras_require={
         'dev': [
