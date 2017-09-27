@@ -76,20 +76,25 @@ class LocalAssociator:
             Pick.assoc_id == None).distinct().all()
 
         log.info('Found associated stations list')
+
+        counter = 0
+
         for indx, (sta,) in enumerate(stations):  # the comma is needed
             picks = self.assoc_db.query(Pick).filter(Pick.sta == sta).filter(
                 Pick.assoc_id == None).order_by(Pick.time).all()
             # Condense picktimes that are within our pick uncertainty value
             # picktimes are python datetime objects
-            if stations.index((sta,)) == 0:  # stupid tuple
-                counter0 = 0
-                picktimes_new, counter = pick_cluster(self.assoc_db, picks,
-                                                      self.aggr_window,
-                                                      self.aggr_norm, counter0)
-            else:
-                picktimes_new, counter = pick_cluster(self.assoc_db, picks,
-                                                      self.aggr_window,
-                                                      self.aggr_norm, counter)
+            # if stations.index((sta,)) == 0:  # stupid tuple
+            #     counter0 = 0
+            #     picktimes_new, counter = pick_cluster(self.assoc_db, picks,
+            #                                           self.aggr_window,
+            #                                           self.aggr_norm,
+            # counter0)
+            # else:
+            picktimes_new, counter = pick_cluster(self.assoc_db, picks,
+                                                  self.aggr_window,
+                                                  self.aggr_norm, counter)
+
             picks_modified = self.assoc_db.query(PickModified).filter(
                 PickModified.sta == sta).filter(
                 PickModified.assoc_id == None).order_by(
@@ -102,7 +107,8 @@ class LocalAssociator:
                         i].time).total_seconds()
                     if (s_p <= self.max_s_p) and (s_p >= self.min_s_p):
                         tt, tt_uncert = tt_s_p(self.tt_stations_db_1D, s_p)
-                        ot = picks_modified[i].time - timedelta(seconds=tt.p_tt)
+                        ot = picks_modified[i].time - \
+                             timedelta(seconds=tt.p_tt)
                         new_candidate = Candidate(ot, sta, tt.d_km, tt.delta,
                                                   picks_modified[i].time,
                                                   picks_modified[i].id,
