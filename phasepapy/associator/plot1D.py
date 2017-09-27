@@ -87,7 +87,6 @@ class Plot:
             arr.append((i, candidate_ots[i].ot, l_cluster, len(cluster)))
             log.debug('DB query successful for canditate '
                       'origin time {}'.format(i))
-            print((i, candidate_ots[i].ot, l_cluster, len(cluster)))
         log.debug('DB query successful for origin times and stations')
         x1 = np.array(arr)[:, 0]
         x2 = np.array(arr)[:, 1]
