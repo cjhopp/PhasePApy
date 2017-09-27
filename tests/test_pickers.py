@@ -1,11 +1,4 @@
-import pytest
 from obspy import read as obspy_read
-from phasepapy.phasepicker import AICDPicker, FBPicker, KTPicker
-
-
-@pytest.fixture(params=[AICDPicker, FBPicker, KTPicker])
-def picker(request):
-    return request.param
 
 
 def test_picker_integration(event, picker):
