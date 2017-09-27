@@ -73,12 +73,12 @@ class LocalAssociator:
 
         log.info('Creating candidate events')
         stations = self.assoc_db.query(Pick.sta).filter(
-            Pick.assoc_id is None).distinct().all()
+            Pick.assoc_id == None).distinct().all()
 
         log.info('Found associated stations list')
-        for sta, in stations:  # the comma is needed
+        for indx, (sta,) in enumerate(stations):  # the comma is needed
             picks = self.assoc_db.query(Pick).filter(Pick.sta == sta).filter(
-                Pick.assoc_id is None).order_by(Pick.time).all()
+                Pick.assoc_id == None).order_by(Pick.time).all()
             # Condense picktimes that are within our pick uncertainty value
             # picktimes are python datetime objects
             if stations.index((sta,)) == 0:  # stupid tuple
@@ -92,7 +92,8 @@ class LocalAssociator:
                                                       self.aggr_norm, counter)
             picks_modified = self.assoc_db.query(PickModified).filter(
                 PickModified.sta == sta).filter(
-                PickModified.assoc_id is None).order_by(PickModified.time).all()
+                PickModified.assoc_id == None).order_by(
+                PickModified.time).all()
 
             # Generate all possible candidate events
             for i in range(0, len(picks_modified) - 1):
@@ -109,6 +110,10 @@ class LocalAssociator:
                                                   picks_modified[j].id)
                         self.assoc_db.add(new_candidate)
                         self.assoc_db.commit()
+            log.debug('Wrote candidate events for station # {number} of {len}, '
+                      'station {sta}'.format(number=indx + 1,
+                                             len=len(stations),
+                                             sta=sta))
         log.info('Finished creating candidate events')
 
     def associate_candidates(self):
@@ -122,17 +127,17 @@ class LocalAssociator:
 
         # Query all candidate ots
         candidate_ots = self.assoc_db.query(Candidate).filter(
-            Candidate.assoc_id is None).order_by(Candidate.ot).all()
+            Candidate.assoc_id == None).order_by(Candidate.ot).all()
         L_ots = len(candidate_ots)
         arr = []
         for i in range(L_ots):
             cluster = self.assoc_db.query(Candidate).filter(
-                Candidate.assoc_id is None).filter(
+                Candidate.assoc_id == None).filter(
                 Candidate.ot >= candidate_ots[i].ot).filter(
                 Candidate.ot < (candidate_ots[i].ot + dt_ot)).order_by(
                 Candidate.ot).all()
             cluster_sta = self.assoc_db.query(Candidate.sta).filter(
-                Candidate.assoc_id is None).filter(
+                Candidate.assoc_id == None).filter(
                 Candidate.ot >= candidate_ots[i].ot).filter(
                 Candidate.ot < (candidate_ots[i].ot + dt_ot)).order_by(
                 Candidate.ot).all()
@@ -147,7 +152,7 @@ class LocalAssociator:
             index = arr[i][0]
             if arr[i][1] >= self.nsta_declare:
                 candis = self.assoc_db.query(Candidate).filter(
-                    Candidate.assoc_id is None).filter(
+                    Candidate.assoc_id == None).filter(
                     Candidate.ot >= candidate_ots[index].ot).filter(
                     Candidate.ot < (candidate_ots[index].ot + dt_ot)).order_by(
                     Candidate.ot).all()
@@ -157,7 +162,7 @@ class LocalAssociator:
                 # been associated
                 picks_associated_id = list(set(
                     self.assoc_db.query(PickModified.id).filter(
-                        PickModified.assoc_id is not None).all()))
+                        PickModified.assoc_id != None).all()))
                 index_candis = []
                 for id, in picks_associated_id:
                     for i, candi in enumerate(candis):

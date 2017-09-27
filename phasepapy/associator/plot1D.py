@@ -86,6 +86,7 @@ class Plot:
             arr.append((i, candidate_ots[i].ot, l_cluster, len(cluster)))
             log.debug('DB query successful for canditate '
                       'origin time {}'.format(i))
+            print((i, candidate_ots[i].ot, l_cluster, len(cluster)))
         log.debug('DB query successful for origin times and stations')
         x1 = np.array(arr)[:, 0]
         x2 = np.array(arr)[:, 1]
@@ -150,10 +151,10 @@ class Plot:
         # plot matches and mismatches circles
         matches = self.assoc_db.query(Candidate).filter(
             Candidate.assoc_id == assoc_id).filter(
-            Candidate.locate_flag is True).all()
+            Candidate.locate_flag == True).all()
         mismatches = self.assoc_db.query(Candidate).filter(
             Candidate.assoc_id == assoc_id).filter(
-            Candidate.locate_flag is False).all()
+            Candidate.locate_flag == False).all()
 
         lon_eve, lat_eve = self.assoc_db.query(Associated.longitude,
                                                Associated.latitude).filter(
