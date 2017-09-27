@@ -95,6 +95,11 @@ class LocalAssociator:
                                                   self.aggr_window,
                                                   self.aggr_norm, counter)
 
+            log.debug('Wrote modified picks for station # {number} of {len}, '
+                      'station {sta}'.format(number=indx + 1,
+                                             len=len(stations),
+                                             sta=sta))
+
             picks_modified = self.assoc_db.query(PickModified).filter(
                 PickModified.sta == sta).filter(
                 PickModified.assoc_id == None).order_by(
