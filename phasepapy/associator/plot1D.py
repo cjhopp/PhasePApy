@@ -16,6 +16,7 @@ from .func1D import TTtable1D
 
 log = logging.getLogger(__name__)
 
+
 def add_subplot_axes(ax, rect, axisbg='w'):
     fig = plt.gcf()
     box = ax.get_position()

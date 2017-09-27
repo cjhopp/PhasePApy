@@ -43,7 +43,7 @@ of your choice:
    .. code:: bash
 
        $ module load python3/3.5.2 python3/3.5.2-matplotlib
-       $ module load geos/3.5.0 openmpi/1.8 gcc
+       $ module load geos/3.5.0 openmpi/1.8 gcc/4.9.0
 
    (Alternatively, you may wish to add the above lines to your
    ``~/.profile`` file)
@@ -53,14 +53,14 @@ of your choice:
    .. code:: bash
 
        export PATH=$HOME/.local/bin:$PATH
-       export PYTHONPATH=$HOME/.local/lib/python3.5/site-packages:$PYTHONPATH
+       export PYTHONPATH=$HOME/.virtualenvs/phasepy35/lib/python3.5/site-packages/:$HOME/.local/lib/python3.5/site-packages:$PYTHONPATH
        export VIRTUALENVWRAPPER_PYTHON=/apps/python3/3.5.2/bin/python3
        export LC_ALL=en_AU.UTF-8
        export LANG=en_AU.UTF-8
        export GEOS
        source $HOME/.local/bin/virtualenvwrapper.sh
 
-5. Install virtualenv and ``virtualenvwrapper`` in a terminal:
+5. Install virtualenv and ``virtualenvwrapper``:
 
    .. code:: bash
 
