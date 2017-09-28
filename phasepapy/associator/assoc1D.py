@@ -228,8 +228,8 @@ class LocalAssociator:
                 # It is possible to have empty rms_sort
                 if rms_sort:
                     rms_sort.sort(key=itemgetter(1))
-                    loc, rms, index = rms_sort[
-                        0]  # loc is the location before outlier cutoff
+                    # loc is the location before outlier cutoff
+                    loc, rms, index = rms_sort[0]
                     lon = loc[0]
                     lat = loc[1]
                     # matches is one of combination of
@@ -318,8 +318,8 @@ class LocalAssociator:
 
         events = self.assoc_db.query(Associated).all()
         log.info('These events will be analysed: {}'.format(events))
-        log.info('If events list is empty, no events satisfy event '
-                 'selection criteria.')
+        if not len(events):
+            log.warning('===========No associated events found===============')
 
         for event in events:
 
@@ -405,8 +405,7 @@ class LocalAssociator:
     # create the combinations from different stations
     def comb(self, tt):
         L = len(set([item[0] for item in tt]))  # length of the set(sta)
-        cb = list(combinations((tt),
-                               L))
+        cb = list(combinations((tt), L))
         # combinations of the array, some of them
         # are repeated such as (sta1, sta1, sta2,...)
 

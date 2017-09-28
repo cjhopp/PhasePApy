@@ -13,16 +13,15 @@ def tt_km(session, d_km):
     :return: TTtable_object, km_difference
     """
 
-    min = session.query(TTtable1D).filter(TTtable1D.d_km <= d_km).order_by(
+    minm = session.query(TTtable1D).filter(TTtable1D.d_km <= d_km).order_by(
         TTtable1D.d_km.desc()).first()
-    #   print min
-    max = session.query(TTtable1D).filter(TTtable1D.d_km >= d_km).order_by(
+
+    maxm = session.query(TTtable1D).filter(TTtable1D.d_km >= d_km).order_by(
         TTtable1D.d_km).first()
-    #   print max.d_km
-    if abs(min.d_km - d_km) <= abs(max.d_km - d_km):
-        return min, abs(min.d_km - d_km)
+    if abs(minm.d_km - d_km) <= abs(maxm.d_km - d_km):
+        return minm, abs(minm.d_km - d_km)
     else:
-        return max, abs(max.d_km - d_km)
+        return maxm, abs(maxm.d_km - d_km)
 
 
 def tt_s_p(session, s_p):
