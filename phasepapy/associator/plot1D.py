@@ -2,6 +2,7 @@ import logging
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 from datetime import timedelta
+import itertools
 import matplotlib
 from matplotlib.collections import LineCollection
 import matplotlib.pyplot as plt
@@ -29,7 +30,7 @@ def add_subplot_axes(ax, rect, axisbg='w'):
     y = infig_position[1]
     width *= rect[2]
     height *= rect[2]
-    subax = fig.add_axes([x, y, width, height], axisbg=axisbg)
+    subax = fig.add_axes([x, y, width, height], facecolor=axisbg)
     x_labelsize = subax.get_xticklabels()[0].get_size()
     y_labelsize = subax.get_yticklabels()[0].get_size()
     x_labelsize *= rect[2] ** 0.5
@@ -120,8 +121,7 @@ class Plot:
                    north=37.5, deltalon=1.0, deltalat=1.0):
         """ Plot all the circles, stations, location and residual distribution on one map by calling the event number after the event been associated.
         """
-        from itertools import cycle
-        plot_colors = cycle(['r', 'g', 'b', 'c', 'm', 'y'])
+        plot_colors = itertools.cycle(['r', 'g', 'b', 'c', 'm', 'y'])
         fig = plt.figure(figsize=(15, 8))
         ax = fig.add_subplot(111)
         # =============================================================

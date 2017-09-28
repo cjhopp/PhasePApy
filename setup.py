@@ -63,7 +63,7 @@ setup(
     install_requires=[
         NUMPY_VERSION,
         'scipy >= 0.15.1',
-        'matplotlib >= 2.0.2',  # need to install inside virtualenv for basemap
+        'matplotlib >= 2.0.0',  # need to install inside virtualenv for basemap
         'obspy >= 1.0.3',
         'pillow >= 4.1.1',
         'basemap == 1.1.0',

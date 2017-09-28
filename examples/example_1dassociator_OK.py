@@ -75,7 +75,7 @@ assocOK = assoc1D.LocalAssociator(db_assoc, db_tt,
                                   aggr_norm='L2',
                                   cutoff_outlier=10,
                                   assoc_ot_uncert=7,
-                                  nsta_declare=4,
+                                  nsta_declare=3,
                                   loc_uncert_thresh=0.2)
 
 # Identify candidate events (Pick Aggregation)
