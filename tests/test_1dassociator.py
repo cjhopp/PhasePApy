@@ -1,6 +1,5 @@
 import os
 import shutil
-# Get logging information
 import logging
 import glob
 from obspy.core import read as obspy_read, Stream
@@ -10,9 +9,8 @@ from datetime import datetime
 
 from phasepapy import palog
 from phasepapy.phasepicker import fbpicker
-from phasepapy.associator import tables1D, assoc1D, plot1D
-from phasepapy.associator.tables1D import Base, Pick, PickModified, \
-    Candidate, Associated
+from phasepapy.associator import tables1D, assoc1D
+from phasepapy.associator.tables1D import Associated
 
 
 FILEPATH = os.path.dirname(__file__)
@@ -25,9 +23,6 @@ db_tt = os.path.join(EX_DATA, 'tt_stations_1D.db')
 
 
 def test_1dassociater(random_filename):
-    # If the associator database exists delete it first,  start fresh for this
-    # example
-
     db_assoc = random_filename(ext='.db')
     db_tt_test = random_filename(ext='.db')
 

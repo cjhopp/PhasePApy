@@ -26,16 +26,17 @@ DATA = os.path.join(FILEPATH, 'data_20130616153750')
 palog.configure('DEBUG')
 log = logging.getLogger(__name__)
 
+# temp db location
+temp_db = os.path.join(DATA, '1dassociator_ok.db')
+
+# If the associator database exists delete it first
+if os.path.exists(temp_db):
+    os.remove(temp_db)
 
 # Our SQLite databases are:
-db_assoc = 'sqlite:///' + os.path.join(DATA, '1dassociator_ok.db')
+db_assoc = 'sqlite:///' + temp_db
 # Traveltime database
 db_tt = 'sqlite:///' + os.path.join(DATA, 'tt_stations_1D.db')
-
-# If the associator database exists delete it first,  start fresh for this
-# example
-if os.path.exists(db_assoc):
-    os.remove(db_assoc)
 
 # Connect to our databases
 engine_assoc = create_engine(db_assoc, echo=False)
