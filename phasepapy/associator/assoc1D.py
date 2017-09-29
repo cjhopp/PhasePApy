@@ -466,13 +466,14 @@ def pick_cluster(session, picks, pickwindow, pickaveraging_norm, counter):
     picks_new = []
     # only one pick in picks
     if len(picks) == 1:
-        cluster = [];
-        cluster.append(picks[0]);
-        cluster_time = [];
+        cluster = []
+        cluster.append(picks[0])
+        cluster_time = []
         cluster_time.append(picks[0].time)
         picks[0].modified_id = 1 + counter  # assign modified id to picks
         counter += 1
-        pickave, pickstd = datetime_statistics(cluster_time, pickaveraging_norm)
+        pickave, pickstd = datetime_statistics(cluster_time,
+                                               pickaveraging_norm)
         # append the row to the picks_new, not only the pick time
         picks_new.append(picks[0])
         pick_modified = PickModified(picks[0].sta, picks[0].chan, picks[0].net,
@@ -488,11 +489,11 @@ def pick_cluster(session, picks, pickwindow, pickaveraging_norm, counter):
         counter = 1 + counter
         while True:
             i = j
-            cluster = [];
-            cluster.append(picks[i]);
-            cluster_time = [];
-            cluster_time.append(picks[i].time);
-            channel = [];
+            cluster = []
+            cluster.append(picks[i])
+            cluster_time = []
+            cluster_time.append(picks[i].time)
+            channel = []
             channel.append(picks[i].chan)
             picks[i].modified_id = counter
             while True:
@@ -524,7 +525,8 @@ def pick_cluster(session, picks, pickwindow, pickaveraging_norm, counter):
                     # assign modified id to picks
                     picks[i + 1].modified_id = counter
                     i += 1
-                    # make sure do not go over the range limit because j=i+1 below, jump out inner while loop
+                    # make sure do not go over the range limit
+                    # because j=i+1 below, jump out inner while loop
                     if i == len(picks) - 1:
                         break
                 else:
@@ -553,8 +555,8 @@ def pick_cluster(session, picks, pickwindow, pickaveraging_norm, counter):
                 if (picks[-1].time - picks[-2].time).total_seconds() > \
                         pickwindow:
                     picks_new.append(picks[-1])
-                    picks[
-                        -1].modified_id = counter  # assign modified id to picks
+                    # assign modified id to picks
+                    picks[-1].modified_id = counter
                     pick_modified = PickModified(picks[-1].sta, picks[-1].chan,
                                                  picks[-1].net, picks[-1].loc,
                                                  picks[-1].time,
@@ -594,9 +596,8 @@ def locating(guess, *args):
     while True:
         # gps2DistAzimuth(lat1, lon1, lat2, lon2) Returns:	 (Great circle
         # distance in m, azimuth A->B in degrees, azimuth B->A in degrees)
-        residuals = residuals + (
-                                gps2dist_azimuth(guess[1], guess[0], args[i][2],
-                                                 args[i][1])[0] / 1000 * 180 / (
+        residuals = residuals + (gps2dist_azimuth(
+            guess[1], guess[0], args[i][2], args[i][1])[0] / 1000 * 180 / (
                                 np.pi * 6371) - args[i][4]) ** 2
         #     np.sqrt((guess[0]-args[i][1])**2 + (guess[1]-args[i][
         # 2])**2)-args[i][4])**2
