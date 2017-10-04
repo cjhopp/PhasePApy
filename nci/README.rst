@@ -57,7 +57,7 @@ of your choice:
        export VIRTUALENVWRAPPER_PYTHON=/apps/python3/3.5.2/bin/python3
        export LC_ALL=en_AU.UTF-8
        export LANG=en_AU.UTF-8
-       export GEOS
+       export GEOS_DIR=$GEOS_BASE
        source $HOME/.local/bin/virtualenvwrapper.sh
 
 5. Install virtualenv and ``virtualenvwrapper``:
