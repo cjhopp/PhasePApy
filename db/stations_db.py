@@ -17,7 +17,7 @@ BaseTT1D.metadata.create_all(engine_associator)
 session = sessionmaker(bind=engine_associator)()
 
 
-stas = os.path.join(PHASEPY, 'inv', 'ga_stations.csv')
+stas = os.path.join(PHASEPY, 'db', 'ga_stations.csv')
 
 with open(stas, 'r') as csvfile:
     csvfile.__next__()  # skip header
