@@ -33,14 +33,13 @@ def tt_s_p(session, s_p):
     :param s_p:
     :return: the closest tt_object, s_p_difference
     """
-    #   print 's_p:',s_p
-    min = session.query(TTtable1D).filter(TTtable1D.s_p <= s_p).order_by(
+    minm = session.query(TTtable1D).filter(TTtable1D.s_p <= s_p).order_by(
         TTtable1D.s_p.desc()).first()
-    #   print 'min.s_p:',min.s_p
-    max = session.query(TTtable1D).filter(TTtable1D.s_p >= s_p).order_by(
+
+    maxm = session.query(TTtable1D).filter(TTtable1D.s_p >= s_p).order_by(
         TTtable1D.s_p).first()
-    #   print 'max.s_p:',max.s_p
-    if abs(min.s_p - s_p) <= abs(max.s_p - s_p):
-        return min, abs(min.s_p - s_p)
+
+    if abs(minm.s_p - s_p) <= abs(maxm.s_p - s_p):
+        return minm, abs(minm.s_p - s_p)
     else:
-        return max, abs(max.s_p - s_p)
+        return maxm, abs(maxm.s_p - s_p)

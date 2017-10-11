@@ -54,28 +54,27 @@ picker = fbpicker.FBPicker(t_long=5, freqmin=1, mode='rms', t_ma=20, nsigma=6,
                            pol_coeff=10, uncert_coeff=3)
 
 # Pick the waveforms
-for wf_file in [mseed]:
-    st = read(wf_file)
-    # st.merge()  # merge will cause issues if there is a data gap
-    for tr in st:
-        tr.detrend('linear')
-        scnl, picks, polarity, snr, uncert = picker.picks(tr)
-        t_create = datetime.utcnow()  # Record the time we made the picks
-        # Add each pick to the database
-        for i in range(len(picks)):
-            new_pick = tables1D.Pick(scnl, picks[i].datetime, polarity[i],
-                                     snr[i], uncert[i], t_create)
-            session.add(new_pick)  # Add pick i to the database
-        session.commit()  # Commit the pick to the database
+st = read(mseed)
+# st.merge()  # merge will cause issues if there is a data gap
+for tr in st:
+    tr.detrend('linear')
+    scnl, picks, polarity, snr, uncert = picker.picks(tr)
+    t_create = datetime.utcnow()  # Record the time we made the picks
+    # Add each pick to the database
+    for i in range(len(picks)):
+        new_pick = tables1D.Pick(scnl, picks[i].datetime, polarity[i],
+                                 snr[i], uncert[i], t_create)
+        session.add(new_pick)  # Add pick i to the database
+    session.commit()  # Commit the pick to the database
 
 # Define the associator
 assocOK = assoc1D.LocalAssociator(db_assoc, db_tt,
-                                  max_km=500,
+                                  max_km=3000,
                                   aggregation=1,
                                   aggr_norm='L2',
                                   cutoff_outlier=10,
                                   assoc_ot_uncert=7,
-                                  nsta_declare=3,
+                                  nsta_declare=4,
                                   loc_uncert_thresh=0.2)
 
 # Identify candidate events (Pick Aggregation)

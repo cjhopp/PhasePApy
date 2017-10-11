@@ -7,7 +7,6 @@ from phasepapy.associator.tt_stations_1D import BaseTT1D, Station1D
 DB = os.path.dirname(__file__)
 PHASEPY = os.path.dirname(DB)
 DATA = os.path.join(PHASEPY, 'examples', 'data_20130616153750')
-sc3_slqlite = os.path.join(PHASEPY, 'inv', 'inventory.sqlite')
 db_tt = os.path.join(DATA, 'tt_stations_1D.db')
 db_uri = 'sqlite:///' + db_tt
 engine = create_engine(db_uri)
