@@ -13,9 +13,10 @@ def configure(verbosity):
 class ElapsedFormatter:
 
     def format(self, record):
+        lineno = record.lineno
         lvl = record.levelname
         name = record.name
         t = int(round(record.relativeCreated/1000.0))
         msg = record.getMessage()
-        logstr = "+{}s {}:{} {}".format(t, name, lvl, msg)
+        logstr = "+{}s {}:{}: {} {}".format(t, name, lineno, lvl, msg)
         return logstr
