@@ -202,19 +202,19 @@ class LocalAssociator:
                 # 1D Associator
                 # store all necessary parameter in lists
                 radius = []
-                for i, candi in enumerate(candis):
+                for k, candi in enumerate(candis):
                     # pass in the radius for map plotting
                     lon, lat = self.tt_stations_db_1D.query(
                         Station1D.longitude, Station1D.sta == candi.sta).first()
                     radius.append(
-                        (candi.sta, lon, lat, candi.d_km, candi.delta, i))
+                        (candi.sta, lon, lat, candi.d_km, candi.delta, k))
 
                 log.debug('Using radius {}'.format(radius))
                 cb = self.comb(radius)
                 log.debug('Using CB: {}'.format(cb))
                 rms_sort = []
-                for i in range(len(cb)):
-                    radius_cb = cb[i]
+                for k in range(len(cb)):
+                    radius_cb = cb[k]
                     # self.nsta_declare has to be greater than or equal to 3
                     if len(radius_cb) >= self.nsta_declare:
                         # disp = 1 disp : bool, Set to True to print
@@ -223,7 +223,7 @@ class LocalAssociator:
                                         disp=0)
                         residual_minimum = residuals_minimum(location,
                                                              radius_cb)
-                        rms_sort.append((location, residual_minimum, i))
+                        rms_sort.append((location, residual_minimum, k))
 
                 # It is possible to have empty rms_sort
                 if rms_sort:
@@ -319,7 +319,8 @@ class LocalAssociator:
         events = self.assoc_db.query(Associated).all()
         log.info('These events will be analysed: {}'.format(events))
         if not len(events):
-            log.warning('===========No associated events found===============')
+            log.error('===========No associated events found===============')
+            raise AssocsException('No events recorded in DB. Plotting aborted')
 
         for event in events:
 
@@ -656,3 +657,7 @@ def outlier_cutoff(matches, location, cutoff_outlier):
 
             # has to return tuple to locate
     return tuple(matches), tuple(mismatch)
+
+
+class AssocsException(Exception):
+    """ Generic association exception class """
