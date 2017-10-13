@@ -28,9 +28,7 @@ def test_1dassociater(random_filename):
 
     # Our SQLite databases are:
     db_assoc = 'sqlite:///' + db_assoc
-
-    db_tt_test = shutil.copy(db_tt, db_tt_test)
-
+    shutil.copy(db_tt, db_tt_test)
     db_tt_test = 'sqlite:///' + db_tt_test
     # Traveltime database
     # Connect to our databases
