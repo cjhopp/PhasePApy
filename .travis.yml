@@ -22,6 +22,8 @@ addons:
     - libatlas-dev
     - libatlas-base-dev
     - gfortran
+    - openmpi-bin
+    - libopenmpi-dev
 
 before_install:
   - pip install -U pip
