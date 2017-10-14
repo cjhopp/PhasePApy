@@ -35,7 +35,7 @@ install:
   - export PYTHONPATH=$PYRATEPATH:$PYTHONPATH
 
 script:
-  - pytest --cov-report term-missing:skip-covered --cov=pyrate tests/
+  - pytest --cov-report term-missing:skip-covered --cov=phasepapy tests/
 
 cache:
   - apt
