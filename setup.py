@@ -6,11 +6,7 @@ import sys
 python_version = sys.version_info
 __version__ = "1.1.01"
 
-# numpy support for python3.3 not available for version > 1.10.1
-if python_version.major == 3 and python_version.minor == 3:
-    NUMPY_VERSION = 'numpy >= 1.9.2, <= 1.10.1'
-else:
-    NUMPY_VERSION = 'numpy >= 1.9.2'
+NUMPY_VERSION = 'numpy >= 1.9.2'
 
 
 class PyTest(TestCommand, object):
@@ -76,15 +72,15 @@ setup(
             'ghp-import',
             'sphinxcontrib-programoutput',
             'tox',
-            'pytest>=3.1.0',
-            'pytest-flake8>=0.8.1',
-            'pytest-mock>=1.6.0',
-            'pytest-cov>=2.5.1',
-            'pytest-regtest>=0.15.1',
-            'flake8-docstrings>=1.1.0',
+            'pytest-flake8 >= 0.8.1',
+            'pytest-mock >= 1.6.0',
+            'pytest-cov >= 2.5.1',
+            'pytest-regtest >= 0.15.1',
+            'flake8-docstrings >= 1.1.0',
             'coverage',
             'codecov',
-            'pytest'  # pytest should be last
+            'coveralls >= 1.1',
+            'pytest'
         ]
     },
 
@@ -101,7 +97,6 @@ setup(
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",

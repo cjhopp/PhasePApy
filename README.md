@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/GeoscienceAustralia/PhasePApy.svg?branch=travis)](https://travis-ci.org/GeoscienceAustralia/PhasePApy)
+[![Coverage Status](https://coveralls.io/repos/github/GeoscienceAustralia/PhasePApy/badge.svg?branch=master)](https://coveralls.io/github/GeoscienceAustralia/PhasePApy?branch=master)
+
 # Installation:
 
 Install [virtualenv](https://gist.github.com/basaks/b33ea9106c7d1d72ac3a79fdcea430eb).
@@ -20,6 +23,11 @@ using:
 pip install --process-dependency-links -e .[dev]
 pip install git+https://github.com/obspy/obspy.git
 ``` 
+
+Tests use `pytest`:
+```bash
+pytest tests/
+```
 
 # PhasePApy 
 
