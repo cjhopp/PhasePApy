@@ -1,0 +1,45 @@
+language: python
+
+python:
+#  - "3.6"
+  - "3.5"
+#  - "3.4"
+#  - "2.7"
+
+
+env:
+  global:
+    - PIP_WHEEL_DIR=$HOME/.cache/pip/wheels
+    - PIP_FIND_LINKS=file://$HOME/.cache/pip/wheels
+
+addons:
+  apt:
+    packages:
+    - libblas-dev
+    - liblapack-dev
+    - libatlas-dev
+    - libatlas-base-dev
+    - gfortran
+    - openmpi-bin
+    - libopenmpi-dev
+
+before_install:
+  - pip install -U pip
+  - pip install wheel
+
+install:
+  - pip install numpy scipy matplotlib
+  - pip install git+https://github.com/obspy/obspy.git
+  - pip install --process-dependency-links -e .[dev]
+
+script:
+  - pytest --cov-report term-missing:skip-covered --cov=phasepapy --cov-fail-under=35 tests/
+
+cache:
+  - apt
+  - pip
+  - directories:
+    - $HOME/.cache/pip
+
+after_success:
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.5 ]]; then coveralls || echo "!! intermittent coveralls failure"; fi
