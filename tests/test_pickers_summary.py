@@ -8,6 +8,8 @@
 #      -- threshold
 #      -- uncertanity
 #      -- pick_ident
+#      -- polarity
+#  
 
 
 from obspy import read as obspy_read
@@ -29,7 +31,8 @@ def test_picker_summary(event, picker):
 
    for s in st[:2]:
       print (s)
-      picket_summary_str = picker_summary_class + '(' + 'picker(),' + 's)'
+      picket_summary_str = picker_summary_class + \
+                           '(' + 'picker(),' + 's)'
       picker_summary = eval(picket_summary_str)
       
       threshold = picker_summary.threshold()
