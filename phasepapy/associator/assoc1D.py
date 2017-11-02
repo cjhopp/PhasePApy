@@ -182,7 +182,7 @@ class LocalAssociator:
     # radius accumulation  
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    def accumulate_radius(self, candis):
+    def __accumulate_radius(self, candis):
         radius = []
         for k, candi in enumerate(candis):
             lon,lat,_ = self.tt_stations_db_1D.query(
@@ -283,7 +283,7 @@ class LocalAssociator:
 
                 self.dump_asscan.append('Candis Array : ')
                 self.dump_asscan.append(candis)
-                radius, lon, lat = self.accumulate_radius(candis)
+                radius, lon, lat = self.__accumulate_radius(candis)
 #
                 self.dump_asscan.append('Radius Info  : ')
                 self.dump_asscan.append(radius)
