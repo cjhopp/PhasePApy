@@ -26,7 +26,7 @@ class LocalAssociator:
 
     def __init__(self, db_assoc, db_tt, max_km=350, aggregation=1,
                  aggr_norm='L2', assoc_ot_uncert=3, nsta_declare=3,
-                 cutoff_outlier=30, loc_uncert_thresh=0.2):
+                 cutoff_outlier=30, loc_uncert_thresh=0.2, dump_on=True):
         """
         Parameters:
         db_assoc          : associator database
@@ -73,6 +73,7 @@ class LocalAssociator:
 #       temporay variables
         
         self.dump_asscan = []
+        self.dump_on = dump_on
 
     def id_candidate_events(self):
         """
@@ -235,8 +236,9 @@ class LocalAssociator:
 
         log.debug('Only analyzing arrival with cluster size > nsta_declare')
 
-        self.dump_asscan.append('Candidate Array : ')
-        self.dump_asscan.append(arr)
+        if self.dump_on :
+            self.dump_asscan.append('Candidate Array : ')
+            self.dump_asscan.append(arr)
 
         for i in range(len(arr)):
             index = arr[i][0]
@@ -250,8 +252,9 @@ class LocalAssociator:
                 log.debug('Found these candidate events: '
                           '{candis}'.format(candis=candis))
 
-                self.dump_asscan.append('Processing Candidate : ')
-                self.dump_asscan.append(arr[i])
+                if self.dump_on :
+                    self.dump_asscan.append('Processing Candidate : ')
+                    self.dump_asscan.append(arr[i])
 
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # remove the candidates with the modified picks has
@@ -280,13 +283,15 @@ class LocalAssociator:
     # 1D Associator
     # store all necessary parameter in lists
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                if self.dump_on:
+                    self.dump_asscan.append('Candis Array : ')
+                    self.dump_asscan.append(candis)
 
-                self.dump_asscan.append('Candis Array : ')
-                self.dump_asscan.append(candis)
                 radius, lon, lat = self.__accumulate_radius(candis)
 #
-                self.dump_asscan.append('Radius Info  : ')
-                self.dump_asscan.append(radius)
+                if self.dump_on:
+                    self.dump_asscan.append('Radius Info  : ')
+                    self.dump_asscan.append(radius)
 
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #	rms sorting 
@@ -296,8 +301,9 @@ class LocalAssociator:
 
                 rms_sort,cb = self.__accumulate_rms_sort(radius, lon, lat,  self.nsta_declare)
 
-                self.dump_asscan.append('RMS Sorted  : ')
-                self.dump_asscan.append(rms_sort)
+                if self.dump_on:
+                    self.dump_asscan.append('RMS Sorted  : ')
+                    self.dump_asscan.append(rms_sort)
 
                 log.debug('rms_sort = {}'.format(rms_sort))
 
@@ -341,9 +347,10 @@ class LocalAssociator:
                         LON = round(LOC[0], 3)
                         LAT = round(LOC[1], 3)
 
-                        self.dump_asscan.append('LON LAT nsta > declared nsta  : ')
-                        self.dump_asscan.append(LON)
-                        self.dump_asscan.append(LAT)
+                        if self.dump_on:
+                            self.dump_asscan.append('LON LAT nsta > declared nsta  : ')
+                            self.dump_asscan.append(LON)
+                            self.dump_asscan.append(LAT)
 
 
                         log.debug(" after nsta LON = {}, LAT = {}".format(LON,LAT))
@@ -396,7 +403,9 @@ class LocalAssociator:
                 break
 
         log.info('Finished associating events')
-        self.__data_dump_asscan()
+
+        if self.dump_on:
+            self.__data_dump_asscan()
 
     def single_phase(self):
 
