@@ -13,8 +13,10 @@ from phasepapy.associator import tables1D, assoc1D
 from phasepapy.associator.tables1D import Associated
 from phasepapy.associator.assoc1D import locating
 from phasepapy.associator.assoc1D import outlier_cutoff
+from phasepapy.associator.assoc1D import residuals_minimum
 from scipy.optimize import fmin
 
+import pytest
 
 FILEPATH = os.path.dirname(__file__)
 print ('FILEPATH   = ',FILEPATH)
@@ -129,40 +131,40 @@ def test_1dassociater(random_filename):
     #   Function Testing for fmin calculating new loaction
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    radius_cb = (('SIO', -137.26, 68.992, 83.5, 0.7514, 0), 
-                 ('U32A', -137.26, 68.992, 203.0, 1.8268, 1), 
-                 ('W35A', -137.26, 68.992, 42.5, 0.3825, 2), 
-                 ('OKCFA', -137.26, 68.992, 33.0, 0.297, 3), 
-                 ('X34A', -137.26, 68.992, 122.0, 1.0979, 4), 
-                 ('FNO', -137.26, 68.992, 36.5, 0.3285, 5))
-    lon = -137.26; lat = 68.992
-
-    location = fmin(locating, [lon, lat], radius_cb,disp=0)
-
-    print ('location = {}',location)
-
-    assert abs(location[0]) > 0
-    assert abs(location[1]) > 0
+#    radius_cb = (('SIO', -137.26, 68.992, 83.5, 0.7514, 0), 
+#                 ('U32A', -137.26, 68.992, 203.0, 1.8268, 1), 
+#                 ('W35A', -137.26, 68.992, 42.5, 0.3825, 2), 
+#                 ('OKCFA', -137.26, 68.992, 33.0, 0.297, 3), 
+#                 ('X34A', -137.26, 68.992, 122.0, 1.0979, 4), 
+#                 ('FNO', -137.26, 68.992, 36.5, 0.3285, 5))
+#    lon = -137.26; lat = 68.992
+#
+#    location = fmin(locating, [lon, lat], radius_cb,disp=0)
+#
+#    print ('location = {}',location)
+#
+#    assert abs(location[0]) > 0
+#    assert abs(location[1]) > 0
 
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #   Function for Testing outer cutoff 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    matches = (('SIO', -137.26, 68.992, 83.5, 0.7514, 0), 
-               ('U32A', -137.26, 68.992, 203.0, 1.8268, 1), 
-               ('W35A', -137.26, 68.992, 42.5, 0.3825, 2), 
-               ('OKCFA', -137.26, 68.992, 33.0, 0.297, 3), 
-               ('X34A', -137.26, 68.992, 122.0, 1.0979, 4), 
-               ('FNO', -137.26, 68.992, 36.5, 0.3285, 5))
-    location = [-137.26, 68.992]
-    cutoff_outer = 30
+#    matches = (('SIO', -137.26, 68.992, 83.5, 0.7514, 0), 
+#               ('U32A', -137.26, 68.992, 203.0, 1.8268, 1), 
+#               ('W35A', -137.26, 68.992, 42.5, 0.3825, 2), 
+#               ('OKCFA', -137.26, 68.992, 33.0, 0.297, 3), 
+#               ('X34A', -137.26, 68.992, 122.0, 1.0979, 4), 
+#               ('FNO', -137.26, 68.992, 36.5, 0.3285, 5))
+#    location = [-137.26, 68.992]
+#    cutoff_outer = 30
        
-    matches, mismatches = outlier_cutoff(matches, location, cutoff_outer)
+#    matches, mismatches = outlier_cutoff(matches, location, cutoff_outer)
 
-    print ("")
-    print ("matches    = {}".format(matches))
-    print ("mismatches = {}".format(mismatches))
-    assert len(matches) > 0    
+#    print ("")
+#    print ("matches    = {}".format(matches))
+#    print ("mismatches = {}".format(mismatches))
+#    assert len(matches) > 0    
 
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -178,3 +180,85 @@ def test_1dassociater(random_filename):
 #    assert abs(event.longitude + 137.596) < 1.0e-3
     print ('event.latitude = ',event.latitude )
 #    assert abs(event.latitude + ) < 1.0e-3
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# test for fmin ( Simplex Algorithm )
+# Simplex algorithm is probably the simplest way to minimize 
+# a fairly well behaved function.  It does not use gradient 
+# evaluations, it takes longer to find minimum.
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@pytest.mark.parametrize (
+     "radius_cb, lon, lat",
+     [ 
+        ((('SIO', -137.26, 68.992, 83.5, 0.7514, 0),
+         ('U32A', -137.26, 68.992, 203.0, 1.8268, 1),
+         ('W35A', -137.26, 68.992, 42.5, 0.3825, 2),
+         ('OKCFA', -137.26, 68.992, 33.0, 0.297, 3),
+         ('X34A', -137.26, 68.992, 122.0, 1.0979, 4),
+         ('FNO', -137.26, 68.992, 36.5, 0.3285, 5)),
+          -137.26, 68.992),
+      ]
+)
+
+def test_fmin(radius_cb,lon, lat):
+    location = fmin(locating, [lon, lat], radius_cb,disp=0)
+    print (' seperate test location = {}', location)
+    assert abs(location[0]) > 0
+    assert abs(location[1]) > 0
+
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#   Function for Testing outer cutoff 
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@pytest.mark.parametrize (
+     "matches, location,cutoff_outer",
+     [
+           ((('SIO', -137.26, 68.992, 83.5, 0.7514, 0),
+            ('U32A', -137.26, 68.992, 203.0, 1.8268, 1),
+            ('W35A', -137.26, 68.992, 42.5, 0.3825, 2),
+            ('OKCFA', -137.26, 68.992, 33.0, 0.297, 3),
+            ('X34A', -137.26, 68.992, 122.0, 1.0979, 4),
+            ('FNO', -137.26, 68.992, 36.5, 0.3285, 5)),
+            [-137.26, 68.992],
+            30 ),
+     ]
+)
+
+def test_outlier_cutoff(matches,location, cutoff_outer):
+    matches, mismatches = outlier_cutoff(matches, location, cutoff_outer)
+    print ("")
+    print ("matches    = {}".format(matches))
+    print ("mismatches = {}".format(mismatches))
+    assert len(matches) > 0    
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#   Function for Testing minimu residulas 
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@pytest.mark.parametrize (
+     "location,args",
+     [
+            ([-137.26, 68.992],
+            (('SIO', -137.26, 68.992, 83.5, 0.7514, 0),
+            ('U32A', -137.26, 68.992, 203.0, 1.8268, 1),
+            ('W35A', -137.26, 68.992, 42.5, 0.3825, 2),
+            ('OKCFA', -137.26, 68.992, 33.0, 0.297, 3),
+            ('X34A', -137.26, 68.992, 122.0, 1.0979, 4),
+            ('FNO', -137.26, 68.992, 36.5, 0.3285, 5))
+           ),
+     ]
+)
+
+def test_residual_minimum(location, args):
+    min_residual = residuals_minimum(location, args)
+    print ("")
+    print ("min_residual    = {}".format(min_residual))
+    assert abs(min_residual) > 0    
+
+
+
