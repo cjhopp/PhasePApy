@@ -15,13 +15,16 @@ class AicDeriv():
     # reverse indexing to remove the nan, np.std(data[:0]) is nan, starting index need to 
     # be npts-2, if data array only has 1 sample, the std is 0, the log10(0) is inf
     for k in range(npts-2,0,-1):
-
-      a = k*np.log10(np.std(data[:k])**2)+(npts-k-1)*np.log10(np.std(data[k:])**2)
+        try:
+            a = k*np.log10(np.std(data[:k])**2)+(npts-k-1)*np.log10(np.std(data[k:])**2)
+        except Exception as e:
+            print (e.msg, e.args)
+            continue
       
       #print a,np.log10(np.std(data[k:]))
-      if a == -float('inf'):
-        a = AIC[k+1]
-      AIC[k] = a
+        if a == -float('inf'):
+            a = AIC[k+1]
+        AIC[k] = a
     AIC[0] = AIC [1]
     AIC[-1] = AIC[-2]
     AIC = np.array(AIC)
