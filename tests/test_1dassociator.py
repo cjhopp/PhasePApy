@@ -14,6 +14,7 @@ from phasepapy.associator.tables1D import Associated
 from phasepapy.associator.assoc1D import locating
 from phasepapy.associator.assoc1D import outlier_cutoff
 from phasepapy.associator.assoc1D import residuals_minimum
+from phasepapy.associator.assoc1D import datetime_statistics
 from scipy.optimize import fmin
 
 import pytest
@@ -261,4 +262,22 @@ def test_residual_minimum(location, args):
     assert abs(min_residual) > 0    
 
 
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#   date time statistics
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@pytest.mark.parametrize (
+     "cluster_time",
+     [
+         [datetime(2013, 6, 16, 15, 39, 10, 800000), 
+          datetime(2013, 6, 16, 15, 39, 10, 870000)]
+     ]
+)
+def test_datetime_statistics(cluster_time):
+    pickave, pickstd = datetime_statistics(cluster_time)
+    print ("")
+    print ("pickave   = {}".format(pickave))
+    print ("pickstd   = {}".format(pickstd))
+    assert pickstd >= 0
 
