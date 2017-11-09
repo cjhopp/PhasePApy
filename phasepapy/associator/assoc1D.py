@@ -91,6 +91,8 @@ class LocalAssociator:
         for indx, (sta,) in enumerate(stations):  # the comma is needed
             picks = self.assoc_db.query(Pick).filter(Pick.sta == sta).filter(
                 Pick.assoc_id == None).order_by(Pick.time).all()
+
+
             # Condense picktimes that are within our pick uncertainty value
             # picktimes are python datetime objects
             # if stations.index((sta,)) == 0:  # stupid tuple
@@ -113,6 +115,7 @@ class LocalAssociator:
                 PickModified.sta == sta).filter(
                 PickModified.assoc_id == None).order_by(
                 PickModified.time).all()
+
 
             log.debug('Queried modified picks for station {number} of {len}, '
                       'station {sta}'.format(number=indx + 1,
