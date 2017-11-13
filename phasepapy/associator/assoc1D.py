@@ -205,14 +205,10 @@ class LocalAssociator:
                 for k, candi in enumerate(candis):
                     
                     # pass in the radius for map plotting
-#                   lon, lat = self.tt_stations_db_1D.query(
-#                        Station1D.longitude, Station1D.sta == candi.sta).first()
+                   lon, lat,_ = self.tt_stations_db_1D.query(
+                        Station1D.longitude, Station1D.latitude, Station1D.sta == candi.sta).first()
 
-                    lon,_ = self.tt_stations_db_1D.query(
-                        Station1D.longitude, Station1D.sta == candi.sta).first()
-                    lat,_  = self.tt_stations_db_1D.query(
-                        Station1D.latitude, Station1D.sta == candi.sta).first()
-#                    log.debug('lon =  {}, lat = {}'.format(lon,lat))
+                    log.debug('lon =  {}, lat = {}'.format(lon,lat))
                     radius.append(
                         (candi.sta, lon, lat, candi.d_km, candi.delta, k))
 
