@@ -205,7 +205,7 @@ class LocalAssociator:
                 for k, candi in enumerate(candis):
                     
                     # pass in the radius for map plotting
-                   lon, lat,_ = self.tt_stations_db_1D.query(
+                    lon, lat,_ = self.tt_stations_db_1D.query(
                         Station1D.longitude, Station1D.latitude, Station1D.sta == candi.sta).first()
 
                     log.debug('lon =  {}, lat = {}'.format(lon,lat))
