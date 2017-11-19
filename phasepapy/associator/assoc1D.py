@@ -12,7 +12,11 @@ from itertools import combinations
 import logging
 
 log = logging.getLogger(__name__)
+# enabling and disabling log
+log.disabled = True
 
+#FORMAT="%(asctime)s [%(levelname)s] %(message)s"
+#logging.basicConfig(format=FORMAT,level=logging.DEBUG)
 
 class LocalAssociator:
     """
@@ -22,18 +26,18 @@ class LocalAssociator:
 
     def __init__(self, db_assoc, db_tt, max_km=350, aggregation=1,
                  aggr_norm='L2', assoc_ot_uncert=3, nsta_declare=3,
-                 cutoff_outlier=30, loc_uncert_thresh=0.2):
+                 cutoff_outlier=30, loc_uncert_thresh=0.2, dump_on=True):
         """
         Parameters:
-        db_assoc: associator database
-        db_tt: travel time table database
-        max_km: maximum distance of S-P interval in distance
-        aggregation: the coefficient multiplied to minimum travel time
-        aggr_norm: L2: median; L1: mean
-        assoc_ot_uncert: origin time uncertainty window
-        nsta_declare: minimum station number to declare a earthquake
-        cutoff_outlier: the outlier cut off distance in km
-        loc_uncert_thresh: location uncertainty in degree
+        db_assoc          : associator database
+        db_tt             : travel time table database
+        max_km            : maximum distance of S-P interval in distance
+        aggregation       : the coefficient multiplied to minimum travel time
+        aggr_norm: L2     : median; L1: mean
+        assoc_ot_uncert   : origin time uncertainty window
+        nsta_declare      : minimum station number to declare a earthquake
+        cutoff_outlier    : the outlier cut off distance in km
+        loc_uncert_thresh : location uncertainty in degree
         """
 
         engine_associator = create_engine(db_assoc, echo=False)
@@ -66,6 +70,11 @@ class LocalAssociator:
         self.cutoff_outlier = cutoff_outlier
         self.loc_uncert_thresh = loc_uncert_thresh
 
+#       temporay variables
+        
+        self.dump_asscan = []
+        self.dump_on = dump_on
+
     def id_candidate_events(self):
         """
         Create candidate events.
@@ -82,6 +91,8 @@ class LocalAssociator:
         for indx, (sta,) in enumerate(stations):  # the comma is needed
             picks = self.assoc_db.query(Pick).filter(Pick.sta == sta).filter(
                 Pick.assoc_id == None).order_by(Pick.time).all()
+
+
             # Condense picktimes that are within our pick uncertainty value
             # picktimes are python datetime objects
             # if stations.index((sta,)) == 0:  # stupid tuple
@@ -105,12 +116,15 @@ class LocalAssociator:
                 PickModified.assoc_id == None).order_by(
                 PickModified.time).all()
 
+
             log.debug('Queried modified picks for station {number} of {len}, '
                       'station {sta}'.format(number=indx + 1,
                                              len=len(stations),
                                              sta=sta))
 
-            # Generate all possible candidate events
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Generate all possible candidate events
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             for i in range(0, len(picks_modified) - 1):
                 for j in range(i + 1, len(picks_modified)):
                     s_p = (picks_modified[j].time - picks_modified[
@@ -132,6 +146,59 @@ class LocalAssociator:
                                              sta=sta))
         log.info('Finished creating candidate events')
 
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#  
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # dumping of colleted data
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    def __data_dump_asscan(self):
+        print ('Collected data dump ..........')
+        for i in range(len(self.dump_asscan)):
+            print (self.dump_asscan[i])
+
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # rms sort
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    def __accumulate_rms_sort(self, radius, lon, lat,st_declare):
+        cb = self.comb(radius)
+        rms_sort = []
+        for k in range(len(cb)):
+            radius_cb = cb[k]
+        # self.nsta_declare has to be greater than or equal to 3
+#            if len(radius_cb) >= self.nsta_declare:
+            if len(radius_cb) >= st_declare :
+                # disp = 1 disp : bool, Set to True to print
+                # convergence messages.
+                location = fmin(locating, [lon, lat], radius_cb,
+                    disp=0)
+                residual_minimum = residuals_minimum(location,
+                    radius_cb)
+                rms_sort.append((location, residual_minimum, k))
+         
+        log.debug('rms sort = {}'.format(rms_sort))
+        return rms_sort,cb
+
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # radius accumulation  
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    def __accumulate_radius(self, candis):
+        radius = []
+        for k, candi in enumerate(candis):
+            lon,lat,_ = self.tt_stations_db_1D.query(
+                       Station1D.longitude,Station1D.latitude, Station1D.sta == candi.sta).first()
+            radius.append((candi.sta, lon, lat, candi.d_km, candi.delta, k))
+
+        return radius, lon, lat 
+
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # associate candidate
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
     def associate_candidates(self):
         """
         Associate all possible candidate events by comparing the
@@ -141,7 +208,9 @@ class LocalAssociator:
 
         dt_ot = timedelta(seconds=self.assoc_ot_uncert)
 
-        # Query all candidate ots
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # Query all candidate ots
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         candidate_ots = self.assoc_db.query(Candidate).filter(
             Candidate.assoc_id == None).order_by(Candidate.ot).all()
         L_ots = len(candidate_ots)
@@ -160,11 +229,19 @@ class LocalAssociator:
             l_cluster = len(set(cluster_sta))
             arr.append((i, l_cluster, len(cluster)))
 
-        # sort arr by l_cluster, notice arr has been changed
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # sort arr by l_cluster, notice arr has been changed
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         arr.sort(key=itemgetter(1), reverse=True)
+
+        log.debug('arr = {}'.format(arr))
         log.debug('Queried all candidate origin times')
 
         log.debug('Only analyzing arrival with cluster size > nsta_declare')
+
+        if self.dump_on :
+            self.dump_asscan.append('Candidate Array : ')
+            self.dump_asscan.append(arr)
 
         for i in range(len(arr)):
             index = arr[i][0]
@@ -178,9 +255,15 @@ class LocalAssociator:
                 log.debug('Found these candidate events: '
                           '{candis}'.format(candis=candis))
 
-                # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                # remove the candidates with the modified picks has
-                # been associated
+                if self.dump_on :
+                    self.dump_asscan.append('Processing Candidate : ')
+                    self.dump_asscan.append(arr[i])
+
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # remove the candidates with the modified picks has
+    # been associated
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
                 picks_associated_id = list(set(
                     self.assoc_db.query(PickModified.id).filter(
                         PickModified.assoc_id != None).all()))
@@ -194,42 +277,38 @@ class LocalAssociator:
                 if index_candis:
                     for j in sorted(set(index_candis), reverse=True):
                         del candis[j]
-                # remove the candidates with the modified picks has
-                # been associated
-                # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # remove the candidates with the modified picks has
+    # been associated
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-                # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                # 1D Associator
-                # store all necessary parameter in lists
-                radius = []
-                for k, candi in enumerate(candis):
-                    
-                    # pass in the radius for map plotting
-                    lon, lat,_ = self.tt_stations_db_1D.query(
-                        Station1D.longitude, Station1D.latitude, Station1D.sta == candi.sta).first()
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    # 1D Associator
+    # store all necessary parameter in lists
+    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                if self.dump_on:
+                    self.dump_asscan.append('Candis Array : ')
+                    self.dump_asscan.append(candis)
 
-                    log.debug('lon =  {}, lat = {}'.format(lon,lat))
-                    radius.append(
-                        (candi.sta, lon, lat, candi.d_km, candi.delta, k))
+                radius, lon, lat = self.__accumulate_radius(candis)
+#
+                if self.dump_on:
+                    self.dump_asscan.append('Radius Info  : ')
+                    self.dump_asscan.append(radius)
 
-                log.debug('Using radius {}'.format(radius))
-                cb = self.comb(radius)
-                log.debug('Using CB: {}'.format(cb))
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    #	rms sorting 
+    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
                 rms_sort = []
-                for k in range(len(cb)):
-                    radius_cb = cb[k]
-                    # self.nsta_declare has to be greater than or equal to 3
-                    if len(radius_cb) >= self.nsta_declare:
-                        # disp = 1 disp : bool, Set to True to print
-                        # convergence messages.
-#                        log.debug(' 233 lon       =  {}, lat = {}'.format(lon,lat))
-#                        log.debug(' 233 radius_cb =  {}          '.format(radius_cb))
-                        location = fmin(locating, [lon, lat], radius_cb,
-                                        disp=0)
-                        log.debug(' after 233 lon =  {}, lat = {}'.format(lon,lat))
-                        residual_minimum = residuals_minimum(location,
-                                                             radius_cb)
-                        rms_sort.append((location, residual_minimum, k))
+
+                rms_sort,cb = self.__accumulate_rms_sort(radius, lon, lat,  self.nsta_declare)
+
+                if self.dump_on:
+                    self.dump_asscan.append('RMS Sorted  : ')
+                    self.dump_asscan.append(rms_sort)
+
+                log.debug('rms_sort = {}'.format(rms_sort))
 
                 # It is possible to have empty rms_sort
                 if rms_sort:
@@ -265,9 +344,19 @@ class LocalAssociator:
                     nsta = len(MATCHES_nol)
 
                     if nsta >= self.nsta_declare:
+                        log.debug("Befor fmin lon = {} lat = {}".format(lon, lat))
+                        log.debug("nsta = {} self.nsta_declare = {}".format(nsta, self.nsta_declare))
                         LOC = fmin(locating, (lon, lat), MATCHES_nol, disp=0)
                         LON = round(LOC[0], 3)
                         LAT = round(LOC[1], 3)
+
+                        if self.dump_on:
+                            self.dump_asscan.append('LON LAT nsta > declared nsta  : ')
+                            self.dump_asscan.append(LON)
+                            self.dump_asscan.append(LAT)
+
+
+                        log.debug(" after nsta LON = {}, LAT = {}".format(LON,LAT))
                         OTS = []
                         for i in range(nsta):
                             OTS.append(candis[MATCHES_nol[i][5]].ot)
@@ -317,6 +406,9 @@ class LocalAssociator:
                 break
 
         log.info('Finished associating events')
+
+        if self.dump_on:
+            self.__data_dump_asscan()
 
     def single_phase(self):
 
@@ -598,6 +690,7 @@ def pick_cluster(session, picks, pickwindow, pickaveraging_norm, counter):
 def locating(guess, *args):
     #   from obspy.core.util import gps2DistAzimuth
     L = len(args)
+    
     residuals = 0
     i = 0
     while True:
