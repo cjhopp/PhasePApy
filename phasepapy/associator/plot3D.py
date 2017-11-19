@@ -1,5 +1,6 @@
 from obspy.core.stream import read, Stream
-from obspy.core.util import gps2DistAzimuth
+#from obspy.core.util import gps2DistAzimuth
+from obspy.geodetics import gps2dist_azimuth
 from obspy.core import UTCDateTime
 from mpl_toolkits.basemap import Basemap
 from matplotlib.collections import LineCollection
@@ -140,7 +141,8 @@ class Plot():
       lon,lat=self.tt_stations_db_3D.query(Station3D.longitude,Station3D.latitude).filter(Station3D.sta==match.sta).first()
       s_p_rainbow.append((match.ts-match.tp).total_seconds())
       radius_rainbow.append(match.d_km)
-      Color=plot_colors.next()
+#      Color=plot_colors.next()
+      Color = next(plot_colors)
       rainbow.append(Color)
       sta_rainbow.append(match.sta)
       LocPair,=equi(m, lon, lat, match.d_km, lw=2., color=Color)
@@ -151,7 +153,8 @@ class Plot():
       lon,lat=self.tt_stations_db_3D.query(Station3D.longitude,Station3D.latitude).filter(Station3D.sta==mismatch.sta).first()
       s_p_rainbow.append((mismatch.ts-mismatch.tp).total_seconds())
       radius_rainbow.append(mismatch.d_km)
-      Color=plot_colors.next()
+#      Color=plot_colors.next()
+      Color = next(plot_colors)
       rainbow.append(Color)
       sta_rainbow.append(mismatch.sta)
       UnlocPair,=equi(m, lon, lat, mismatch.d_km, ls='--', lw=1., color=Color)
@@ -322,7 +325,8 @@ class Plot():
       t=np.arange(0,round(tr.stats.npts/tr.stats.sampling_rate/tr.stats.delta))*tr.stats.delta # due to the float point arithmetic issue, can not use "t=np.arange(0,tr.stats.npts/tr.stats.sampling_rate,tr.stats.delta)"
       segs.append(np.hstack((data[:,np.newaxis],t[:,np.newaxis])))
       lon,lat = self.tt_stations_db_3D.query(Station3D.longitude,Station3D.latitude).filter(Station3D.sta==tr.stats.station).first()
-      distance = int(gps2DistAzimuth(lat,lon,eq_lat,eq_lon)[0]/1000.)  #gps2DistAzimuth return in meters, convert to km by /1000
+#      distance = int(gps2DistAzimuth(lat,lon,eq_lat,eq_lon)[0]/1000.)  #gps2DistAzimuth return in meters, convert to km by /1000
+      distance = int(gps2dist_azimuth(lat,lon,eq_lat,eq_lon)[0]/1000.)  #gps2DistAzimuth return in meters, convert to km by /1000
 #       distance=self.assoc_db.query(Candidate.d_km).filter(Candidate.assoc_id==assoc_id).filter(Candidate.sta==tr.stats.station).first()[0]#;print distance,tr.stats.station
       ticklocs.append(distance)
       sta.append(tr.stats.station)
