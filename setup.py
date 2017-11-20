@@ -80,7 +80,7 @@ setup(
             'coverage',
             'codecov',
             'coveralls >= 1.1',
-            'pytest'
+            'pytest >= 3.2'
         ]
     },
 
