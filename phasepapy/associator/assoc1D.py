@@ -26,7 +26,7 @@ class LocalAssociator:
 
     def __init__(self, db_assoc, db_tt, max_km=350, aggregation=1,
                  aggr_norm='L2', assoc_ot_uncert=3, nsta_declare=3,
-                 cutoff_outlier=30, loc_uncert_thresh=0.2, dump_on=True):
+                 cutoff_outlier=30, loc_uncert_thresh=0.2, dump_on=False):
         """
         Parameters:
         db_assoc          : associator database
