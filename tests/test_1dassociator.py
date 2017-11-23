@@ -119,7 +119,6 @@ def test_1dassociater(random_filename):
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #   Function Testing for radius paremeters 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 #    candis_arr = [Candidate Event <2013-06-16T15:38:50.150000 U32A 203.00 1.83 18 19>]
 #    radius=[]
 #    radius, lon, lat = assocOK.accumulate_radius(candis_arr)
@@ -134,12 +133,10 @@ def test_1dassociater(random_filename):
     # Add singles stations to events
     assocOK.single_phase()
 
-
     events = assocOK.assoc_db.query(Associated).all()
     assert len(events) == 1
     event = events[0]
     assert event.nsta == 3
-
     print (event.longitude)
     print (event.latitude)
 
@@ -147,7 +144,6 @@ def test_1dassociater(random_filename):
     print ('event.latitude = ',event.latitude )
 #    assert abs(event.latitude + ) < 1.0e-3
 #    assert abs(event.longitude + 137.596) < 1.0e-3
-
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # test for fmin ( Simplex Algorithm )
