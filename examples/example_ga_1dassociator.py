@@ -22,7 +22,7 @@ from phasepapy.associator import tables1D, assoc1D, plot1D
 FILEPATH = os.path.dirname(__file__)
 DATA = os.path.join(FILEPATH, 'data_20130616153750')
 PHASEPAPY = os.path.dirname(FILEPATH)
-mseed = os.path.join('tests', 'data', 'ga2017qxlpiu_short.mseed')
+mseed = os.path.join('../tests', 'data', 'ga2017qxlpiu_short.mseed')
 
 palog.configure('DEBUG')
 log = logging.getLogger(__name__)                            
