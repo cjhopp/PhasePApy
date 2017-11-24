@@ -160,7 +160,11 @@ class LocalAssociator:
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     def __accumulate_rms_sort(self, radius, lon, lat,st_declare):
+
+        log.debug('Using radius {}'.format(radius))
         cb = self.comb(radius)
+        log.debug('Using CB: {}'.format(cb))
+
         rms_sort = []
         for k in range(len(cb)):
             radius_cb = cb[k]
@@ -258,7 +262,6 @@ class LocalAssociator:
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # remove the candidates with the modified picks has
     # been associated
-    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
                 picks_associated_id = list(set(
                     self.assoc_db.query(PickModified.id).filter(
@@ -273,7 +276,6 @@ class LocalAssociator:
                 if index_candis:
                     for j in sorted(set(index_candis), reverse=True):
                         del candis[j]
-    # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     # remove the candidates with the modified picks has
     # been associated
     # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

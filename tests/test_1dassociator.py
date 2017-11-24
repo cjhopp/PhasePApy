@@ -128,47 +128,6 @@ def test_1dassociater(random_filename):
 #    print ("Lon       = {}".format(lon))
 #    print ("Lat       = {}".format(lat))
 
-    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #   Function Testing for fmin calculating new loaction
-    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-#    radius_cb = (('SIO', -137.26, 68.992, 83.5, 0.7514, 0), 
-#                 ('U32A', -137.26, 68.992, 203.0, 1.8268, 1), 
-#                 ('W35A', -137.26, 68.992, 42.5, 0.3825, 2), 
-#                 ('OKCFA', -137.26, 68.992, 33.0, 0.297, 3), 
-#                 ('X34A', -137.26, 68.992, 122.0, 1.0979, 4), 
-#                 ('FNO', -137.26, 68.992, 36.5, 0.3285, 5))
-#    lon = -137.26; lat = 68.992
-#
-#    location = fmin(locating, [lon, lat], radius_cb,disp=0)
-#
-#    print ('location = {}',location)
-#
-#    assert abs(location[0]) > 0
-#    assert abs(location[1]) > 0
-
-
-    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #   Function for Testing outer cutoff 
-    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#    matches = (('SIO', -137.26, 68.992, 83.5, 0.7514, 0), 
-#               ('U32A', -137.26, 68.992, 203.0, 1.8268, 1), 
-#               ('W35A', -137.26, 68.992, 42.5, 0.3825, 2), 
-#               ('OKCFA', -137.26, 68.992, 33.0, 0.297, 3), 
-#               ('X34A', -137.26, 68.992, 122.0, 1.0979, 4), 
-#               ('FNO', -137.26, 68.992, 36.5, 0.3285, 5))
-#    location = [-137.26, 68.992]
-#    cutoff_outer = 30
-       
-#    matches, mismatches = outlier_cutoff(matches, location, cutoff_outer)
-
-#    print ("")
-#    print ("matches    = {}".format(matches))
-#    print ("mismatches = {}".format(mismatches))
-#    assert len(matches) > 0    
-
-    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     # Add singles stations to events
     assocOK.single_phase()
@@ -280,4 +239,3 @@ def test_datetime_statistics(cluster_time):
     print ("pickave   = {}".format(pickave))
     print ("pickstd   = {}".format(pickstd))
     assert pickstd >= 0
-
