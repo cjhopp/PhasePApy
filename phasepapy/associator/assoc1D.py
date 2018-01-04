@@ -295,9 +295,7 @@ class LocalAssociator:
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #	rms sorting 
     # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
                 rms_sort = []
-
                 rms_sort,cb = self.__accumulate_rms_sort(radius, lon, lat,  self.nsta_declare)
 
                 if self.dump_on:
