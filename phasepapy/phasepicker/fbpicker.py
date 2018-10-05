@@ -430,7 +430,7 @@ class FBSummary():
         plt.tight_layout()
         plt.show()
 
-    def plot_summary(self):
+    def plot_summary(self, show=True, savefn=None):
         """
         Plot CF.
         """
@@ -471,6 +471,10 @@ class FBSummary():
                     [min(self.tr.data), max(self.tr.data)], 'k--')
             ax.text((picks[i] - self.tr.stats.starttime), 1,
                     '%s' % (self.pol[i]), color='black')
+            ax.text((picks[i] - self.tr.stats.starttime),
+                     max(self.tr) - 0.5 * (max(self.tr) - min(self.tr)),
+                     '%s' % (str(picks[i])), color='black')
 
         plt.tight_layout()
-        plt.show()
+        if (savefn): plt.savefig(savefn)
+        if(show): plt.show()
