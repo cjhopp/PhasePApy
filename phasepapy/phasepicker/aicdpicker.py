@@ -324,7 +324,7 @@ class AICDSummary:
                     R = int(round(filter_length / dt, 0));  # print 'l'
         return r, R
 
-    def plot_picks(self):
+    def plot_picks(self, show=True, savefn=None):
         """
         Plot picks and waveform.
         """
@@ -349,10 +349,16 @@ class AICDSummary:
             plt.text((picks[i] - self.tr.stats.starttime),
                      max(self.tr) - 0.3 * (max(self.tr) - min(self.tr)),
                      '%s' % (self.pol[i]), color='black')
-        plt.xlabel('Time (s)')
-        plt.show()
 
-    def plot_summary(self):
+            plt.text((picks[i] - self.tr.stats.starttime),
+                     max(self.tr) - 0.5 * (max(self.tr) - min(self.tr)),
+                     '%s' % (str(picks[i])), color='black')
+        plt.xlabel('Time (s)')
+
+        if(savefn): plt.savefig(savefn)
+        if(show): plt.show()
+
+    def plot_summary(self, show=True, savefn=None):
         """
         Plot CF.
         """
@@ -399,6 +405,8 @@ class AICDSummary:
                    shadow=True, fancybox=True)
 
         plt.tight_layout()
-        plt.show()
+
+        if(savefn): plt.savefig(savefn)
+        if(show): plt.show()
 
         # fig.savefig('AICD.pdf')
