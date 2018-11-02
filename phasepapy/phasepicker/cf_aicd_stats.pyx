@@ -4,13 +4,16 @@ cimport numpy as np
 cimport cython
 from libc.stdio cimport printf
 
+ctypedef np.double_t DOUBLE_t
+
 cdef extern from "math.h":
     double sqrt(double m)
     double log10(double m)
     double fabs(double m)
 
 @cython.boundscheck(False)
-def cyOptStdDev(double[:] a, int n):
+@cython.wraparound (False)
+def cyOptStdDev(np.ndarray[DOUBLE_t, ndim=1] a, int n):
     cdef Py_ssize_t i
     cdef double m = 0.0
     for i in range(n):
@@ -24,8 +27,10 @@ def cyOptStdDev(double[:] a, int n):
     return sqrt(v / n)
 # end func
 
-def stats(double[:] data, int npts):
-    cdef double[:] AIC = np.zeros(npts)
+def stats(np.ndarray[DOUBLE_t, ndim=1] data,
+          np.ndarray[DOUBLE_t, ndim = 1] AIC,
+          np.ndarray[DOUBLE_t, ndim = 1] AIC_deriv,
+          int npts):
 
     # reverse indexing to remove the nan, np.std(data[:0]) is nan, starting index need to
     # be npts-2, if data array only has 1 sample, the std is 0, the log10(0) is inf
@@ -45,12 +50,11 @@ def stats(double[:] data, int npts):
     AIC[0] = AIC [1]
     AIC[-1] = AIC[-2]
 
-    cdef double[:] AIC_deriv = np.zeros(npts)
     for i in range(npts-1):
       b = fabs(AIC[i+1]-AIC[i])
       AIC_deriv[i+1] = b
 
     AIC_deriv[0] = AIC_deriv[1]
 
-    return np.array(AIC), np.array(AIC_deriv)
+    return AIC, AIC_deriv
 # end func

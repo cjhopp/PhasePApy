@@ -42,7 +42,7 @@ class AicDeriv():
             return AIC, AIC_deriv
 
         else:
-            result = cf_aicd_stats.stats(data, npts)
+            result = cf_aicd_stats.stats(data, np.zeros(npts), np.zeros(npts), npts)
             # print np.sum(result[0]), np.sum(result[1])
             return result
         # end if
