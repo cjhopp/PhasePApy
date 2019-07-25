@@ -10,3 +10,4 @@ geographiclib
 pytest-cov>=2.5.1
 coverage
 codecov
+Cython
