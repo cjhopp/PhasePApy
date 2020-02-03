@@ -1,10 +1,10 @@
 numpy
 scipy
-git+git://github.com/obspy/obspy@9a419d0#egg=obspy
+obspy
 matplotlib >= 1.4.3
 pytest
 sqlalchemy
-git+git://github.com/matplotlib/basemap@releases/1.1.0#egg=basemap
+cartopy
 mpi4py == 2.0.0
 geographiclib
 pytest-cov>=2.5.1
