@@ -52,13 +52,8 @@ setup(
                       '.zip#egg=basemap-1.1.0'],
     package_dir={'PhasePApy': 'phasepapy'},
     include_package_data=True,
-    # numpy preinstall required due to obspy
-    setup_requires=[
-        NUMPY_VERSION, 'Cython >= 0.22.1',
-    ],
     install_requires=[
         NUMPY_VERSION,
-        'Cython >= 0.22.1',
         'scipy >= 0.15.1',
         'matplotlib >= 2.0.0',  # need to install inside virtualenv for basemap
         'obspy >= 1.1.0',
