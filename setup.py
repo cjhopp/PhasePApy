@@ -62,9 +62,9 @@ setup(
         'matplotlib >= 2.0.0',  # need to install inside virtualenv for basemap
         'obspy >= 1.1.0',
         'pillow >= 4.1.1',
-        'basemap == 1.1.0',
-        'mpi4py == 2.0.0',
-        'geographiclib',
+        # 'cartopy',
+        # 'mpi4py == 2.0.0',
+        # 'geographiclib',
     ],
     extras_require={
         'dev': [
