@@ -1,7 +1,7 @@
 import numpy as np
 from .util import *
 import pyximport; pyximport.install(setup_args={"include_dirs":np.get_include()})
-from . import cf_aicd_stats
+from .cf_aicd_stats import stats
 
 class AicDeriv():
     def __init__(self, trace):
@@ -35,6 +35,5 @@ class AicDeriv():
             return AIC, AIC_deriv
 
         else:
-            result = cf_aicd_stats.stats(data, np.zeros(npts),
-                                         np.zeros(npts), npts)
+            result = stats(data, np.zeros(npts), np.zeros(npts), npts)
             return result
