@@ -1,7 +1,7 @@
 import numpy as np
 from .util import *
 import pyximport
-pyximport.install(setup_args={"include_dirs":np.get_include()})
+# pyximport.install(setup_args={"include_dirs":np.get_include()})
 from . import cf_aicd_stats
 
 class AicDeriv():
