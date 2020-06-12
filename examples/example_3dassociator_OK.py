@@ -44,7 +44,7 @@ session=Session()
 file_list=glob.glob('data_20130616153750/*.msd')
 
 # Define our picker instance
-picker = fbpicker.FBPicker(t_long = 5, freqmin = 1, mode = 'rms', t_ma = 20, nsigma = 6, \
+picker = fbpicker.FBPicker(t_long = 5, freqmin = 1, mode = 'rms', t_ma = 20, nsigma = 6,
     t_up = 0.78, nr_len = 2, nr_coeff = 2, pol_len = 10, pol_coeff = 10, uncert_coeff = 3)
  
 # Pick the waveforms     

@@ -11,8 +11,6 @@ class AicDeriv():
         npts = self.tr.stats.npts
         data = self.tr.data.astype(np.float)
         # delta = 1.0/self.tr.stats.sampling_rate
-        print('Calculating AICD stats')
-        print(optimized)
         if (not optimized):
             AIC = np.zeros(npts)
             # reverse indexing to remove the nan, np.std(data[:0]) is nan,
